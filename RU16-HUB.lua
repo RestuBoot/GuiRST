@@ -1,75 +1,88 @@
--- RstHUB dengan Teleport ke Pemain
--- By RestuBoot
+-- RstHUB GUI Script
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
 -- Buat ScreenGui
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "RstHUB"
-ScreenGui.Parent = game:GetService("CoreGui")
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "RstHUB"
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+screenGui.ResetOnSpawn = false
 
--- Buat Frame Utama
-local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 250, 0, 300)
-MainFrame.Position = UDim2.new(0.3, 0, 0.2, 0)
-MainFrame.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
-MainFrame.BorderSizePixel = 0
-MainFrame.Active = true
-MainFrame.Draggable = true
-MainFrame.Parent = ScreenGui
+-- Tombol untuk buka GUI
+local openButton = Instance.new("TextButton")
+openButton.Size = UDim2.new(0, 120, 0, 40)
+openButton.Position = UDim2.new(0, 20, 0, 200)
+openButton.Text = "Open RstHUB"
+openButton.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+openButton.TextColor3 = Color3.new(0, 0, 0)
+openButton.Parent = screenGui
+
+-- Frame utama
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 300, 0, 400)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+mainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 150)
+mainFrame.Visible = false
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
 
 -- Judul
-local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, 0, 0, 30)
-Title.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
-Title.Text = "RstHUB - Teleport"
-Title.TextColor3 = Color3.fromRGB(0, 0, 0)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 18
-Title.Parent = MainFrame
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundColor3 = Color3.fromRGB(255, 223, 0)
+title.Text = "RstHUB - Teleport Menu"
+title.TextColor3 = Color3.new(0, 0, 0)
+title.Parent = mainFrame
 
--- Scrolling untuk daftar pemain
-local PlayerList = Instance.new("ScrollingFrame")
-PlayerList.Size = UDim2.new(1, -10, 1, -40)
-PlayerList.Position = UDim2.new(0, 5, 0, 35)
-PlayerList.CanvasSize = UDim2.new(0, 0, 0, 0)
-PlayerList.ScrollBarThickness = 6
-PlayerList.BackgroundColor3 = Color3.fromRGB(240, 240, 200)
-PlayerList.BorderSizePixel = 0
-PlayerList.Parent = MainFrame
+-- ScrollFrame untuk daftar pemain
+local scroll = Instance.new("ScrollingFrame")
+scroll.Size = UDim2.new(1, -10, 1, -50)
+scroll.Position = UDim2.new(0, 5, 0, 45)
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.ScrollBarThickness = 6
+scroll.Parent = mainFrame
 
--- Template Button untuk pemain
-local function CreatePlayerButton(player)
-    local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(1, -10, 0, 30)
-    Btn.Position = UDim2.new(0, 5, 0, (#PlayerList:GetChildren()-1) * 35)
-    Btn.BackgroundColor3 = Color3.fromRGB(255, 255, 150)
-    Btn.Text = player.Name
-    Btn.TextColor3 = Color3.fromRGB(0, 0, 0)
-    Btn.Font = Enum.Font.SourceSansBold
-    Btn.TextSize = 16
-    Btn.Parent = PlayerList
+-- Template untuk tombol player
+local function createPlayerButton(player)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 35)
+    btn.Text = player.Name
+    btn.BackgroundColor3 = Color3.fromRGB(240, 240, 0)
+    btn.TextColor3 = Color3.new(0, 0, 0)
+    btn.Parent = scroll
 
-    Btn.MouseButton1Click:Connect(function()
-        local LocalPlayer = game.Players.LocalPlayer
-        if LocalPlayer.Character and player.Character then
-            LocalPlayer.Character:MoveTo(player.Character.PrimaryPart.Position + Vector3.new(2,0,2))
+    btn.MouseButton1Click:Connect(function()
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame + Vector3.new(2, 0, 0)
+            end
         end
     end)
+
+    return btn
 end
 
 -- Update daftar pemain
-local function RefreshPlayers()
-    PlayerList:ClearAllChildren()
-    for _, p in ipairs(game.Players:GetPlayers()) do
-        if p ~= game.Players.LocalPlayer then
-            CreatePlayerButton(p)
+local function updatePlayerList()
+    scroll:ClearAllChildren()
+    local y = 0
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer then
+            local btn = createPlayerButton(plr)
+            btn.Position = UDim2.new(0, 5, 0, y)
+            y = y + 40
         end
     end
-    PlayerList.CanvasSize = UDim2.new(0,0,0,#game.Players:GetPlayers()*35)
+    scroll.CanvasSize = UDim2.new(0, 0, 0, y)
 end
 
--- Event update otomatis
-game.Players.PlayerAdded:Connect(RefreshPlayers)
-game.Players.PlayerRemoving:Connect(RefreshPlayers)
+-- Event jika pemain join/keluar
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
 
--- Pertama kali dijalankan
-RefreshPlayers()
+-- Tombol open GUI
+openButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = not mainFrame.Visible
+    updatePlayerList()
+end)
