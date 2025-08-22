@@ -1,176 +1,118 @@
-local CoreGui = game:GetService("CoreGui")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local mouse = LocalPlayer:GetMouse()
-local RunService = game:GetService("RunService")
-local camera = workspace.CurrentCamera
+-- RstHUB GUI Script
+-- Dibuat untuk PlayerList custom, draggable + animasi
 
 -- Hapus GUI lama kalau ada
-if CoreGui:FindFirstChild("UniversalGUI") then
-    CoreGui:FindFirstChild("UniversalGUI"):Destroy()
+if game.CoreGui:FindFirstChild("RstHUB") then
+    game.CoreGui.RstHUB:Destroy()
 end
 
--- Fungsi buat GUI
-local function createButton(parent, text, position, callback)
-    local button = Instance.new("TextButton")
-    button.Size = UDim2.new(0, 140, 0, 30)
-    button.Position = position
-    button.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
-    button.Font = Enum.Font.SourceSansBold
-    button.Text = "☐ "..text
-    button.TextSize = 14
-    button.TextColor3 = Color3.new(0, 0, 0)
-    button.Parent = parent
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
-    local enabled = false
-    button.MouseButton1Click:Connect(function()
-        enabled = not enabled
-        button.Text = (enabled and "☑ " or "☐ ") .. text
-        callback(enabled)
-    end)
-end
+-- Buat ScreenGui
+local gui = Instance.new("ScreenGui")
+gui.Name = "RstHUB"
+gui.ResetOnSpawn = false
+gui.Parent = game.CoreGui
 
--- Buat Frame utama
-local ScreenGui = Instance.new("ScreenGui", CoreGui)
-ScreenGui.Name = "UniversalGUI"
+-- Tombol toggle (kecil, bulat, draggable)
+local toggleButton = Instance.new("TextButton")
+toggleButton.Name = "Toggle"
+toggleButton.Size = UDim2.new(0,40,0,40)
+toggleButton.Position = UDim2.new(0.05,0,0.5,0)
+toggleButton.Text = "≡"
+toggleButton.TextSize = 18
+toggleButton.BackgroundColor3 = Color3.fromRGB(255, 221, 0)
+toggleButton.TextColor3 = Color3.fromRGB(0,0,0)
+toggleButton.BorderSizePixel = 0
+toggleButton.Parent = gui
+toggleButton.AutoButtonColor = true
+toggleButton.Active = true
+toggleButton.Draggable = true
+toggleButton.AnchorPoint = Vector2.new(0.5,0.5)
+toggleButton.Font = Enum.Font.SourceSansBold
+toggleButton.TextScaled = true
+toggleButton.TextWrapped = true
+toggleButton.BackgroundTransparency = 0.1
+toggleButton.UICorner = Instance.new("UICorner", toggleButton)
+toggleButton.UICorner.CornerRadius = UDim.new(1,0)
 
-local mainFrame = Instance.new("Frame", ScreenGui)
-mainFrame.Size = UDim2.new(0, 300, 0, 160)
-mainFrame.Position = UDim2.new(0, 80, 0, 300)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+-- Frame utama (draggable + animasi buka/tutup)
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0,250,0,300)
+mainFrame.Position = UDim2.new(0.5,-125,0.5,-150)
+mainFrame.BackgroundColor3 = Color3.fromRGB(255, 221, 0)
+mainFrame.BorderSizePixel = 0
+mainFrame.Visible = false
 mainFrame.Active = true
 mainFrame.Draggable = true
+mainFrame.Parent = gui
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0,12)
 
--- WalkSpeed
-createButton(mainFrame, "WalkSpeed", UDim2.new(0, 10, 0, 10), function(enabled)
-    if enabled then
-        LocalPlayer.Character.Humanoid.WalkSpeed = 50
+-- Judul
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1,0,0,30)
+title.BackgroundTransparency = 1
+title.Text = "RstHUB PlayerList"
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 20
+title.TextColor3 = Color3.fromRGB(0,0,0)
+title.Parent = mainFrame
+
+-- Scrolling list
+local scrollingFrame = Instance.new("ScrollingFrame")
+scrollingFrame.Size = UDim2.new(1,-10,1,-40)
+scrollingFrame.Position = UDim2.new(0,5,0,35)
+scrollingFrame.CanvasSize = UDim2.new(0,0,0,0)
+scrollingFrame.ScrollBarThickness = 6
+scrollingFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+scrollingFrame.Parent = mainFrame
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Padding = UDim.new(0,5)
+UIListLayout.Parent = scrollingFrame
+
+-- Template player label
+local function createPlayerLabel(player)
+    local lbl = Instance.new("TextLabel")
+    lbl.Size = UDim2.new(1,-5,0,30)
+    lbl.BackgroundColor3 = Color3.fromRGB(255,255,255)
+    lbl.Text = player.Name
+    lbl.Font = Enum.Font.SourceSans
+    lbl.TextSize = 16
+    lbl.TextColor3 = Color3.fromRGB(0,0,0)
+    lbl.Parent = scrollingFrame
+    Instance.new("UICorner", lbl).CornerRadius = UDim.new(0,8)
+    return lbl
+end
+
+-- Fungsi update player list
+local function updatePlayers()
+    scrollingFrame:ClearAllChildren()
+    UIListLayout.Parent = scrollingFrame
+    for _,plr in ipairs(Players:GetPlayers()) do
+        createPlayerLabel(plr)
+    end
+    scrollingFrame.CanvasSize = UDim2.new(0,0,0,UIListLayout.AbsoluteContentSize.Y+10)
+end
+
+-- Event join/leave
+Players.PlayerAdded:Connect(updatePlayers)
+Players.PlayerRemoving:Connect(updatePlayers)
+
+-- Toggle animasi buka/tutup
+local open = false
+toggleButton.MouseButton1Click:Connect(function()
+    open = not open
+    if open then
+        mainFrame.Visible = true
+        mainFrame.Size = UDim2.new(0,0,0,0)
+        TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0,250,0,300)}):Play()
+        updatePlayers()
     else
-        LocalPlayer.Character.Humanoid.WalkSpeed = 16
+        TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0,0,0,0)}):Play()
+        task.wait(0.3)
+        mainFrame.Visible = false
     end
-end)
-
--- Infinite Jump
-createButton(mainFrame, "Infinite Jump", UDim2.new(0, 150, 0, 10), function(enabled)
-    if enabled then
-        _G.infjump = true
-        game:GetService("UserInputService").JumpRequest:Connect(function()
-            if _G.infjump then
-                LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
-            end
-        end)
-    else
-        _G.infjump = false
-    end
-end)
-
--- Noclip
-createButton(mainFrame, "Noclip", UDim2.new(0, 10, 0, 50), function(enabled)
-    if enabled then
-        _G.noclip = true
-        RunService.Stepped:Connect(function()
-            if _G.noclip and LocalPlayer.Character then
-                for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = false
-                    end
-                end
-            end
-        end)
-    else
-        _G.noclip = false
-    end
-end)
-
--- Invisible
-createButton(mainFrame, "Invisible", UDim2.new(0, 150, 0, 50), function(enabled)
-    if enabled then
-        for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
-            if part:IsA("BasePart") and part.Transparency < 1 then
-                part.Transparency = 1
-            end
-        end
-        if LocalPlayer.Character:FindFirstChild("Head") then
-            LocalPlayer.Character.Head.face.Transparency = 1
-        end
-    else
-        for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.Transparency = 0
-            end
-        end
-        if LocalPlayer.Character:FindFirstChild("Head") then
-            LocalPlayer.Character.Head.face.Transparency = 0
-        end
-    end
-end)
-
--- Player ESP
-createButton(mainFrame, "Player ESP", UDim2.new(0, 10, 0, 90), function(enabled)
-    if enabled then
-        _G.esp = true
-        while _G.esp do
-            for _, player in pairs(Players:GetPlayers()) do
-                if player ~= LocalPlayer and player.Character and not player.Character:FindFirstChild("ESPBox") then
-                    local billboard = Instance.new("BillboardGui", player.Character)
-                    billboard.Name = "ESPBox"
-                    billboard.Size = UDim2.new(0, 100, 0, 40)
-                    billboard.StudsOffset = Vector3.new(0, 3, 0)
-                    billboard.AlwaysOnTop = true
-
-                    local label = Instance.new("TextLabel", billboard)
-                    label.Size = UDim2.new(1, 0, 1, 0)
-                    label.Text = player.Name .. " | " .. math.floor((player.Character.HumanoidRootPart.Position - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude).."m"
-                    label.TextColor3 = Color3.new(1, 1, 1)
-                    label.BackgroundTransparency = 1
-                    label.TextScaled = true
-                end
-            end
-            wait(2)
-        end
-    else
-        _G.esp = false
-        for _, player in pairs(Players:GetPlayers()) do
-            if player.Character and player.Character:FindFirstChild("ESPBox") then
-                player.Character:FindFirstChild("ESPBox"):Destroy()
-            end
-        end
-    end
-end)
-
--- Teleport
-local selectedPlayer = nil
-createButton(mainFrame, "Select Player", UDim2.new(0, 150, 0, 90), function()
-    local list = {}
-    for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer then
-            table.insert(list, p.Name)
-        end
-    end
-    selectedPlayer = list[1] or nil
-    print("Selected:", selectedPlayer)
-end)
-
-createButton(mainFrame, "Teleport", UDim2.new(0, 150, 0, 130), function()
-    if selectedPlayer then
-        local target = Players:FindFirstChild(selectedPlayer)
-        if target and target.Character then
-            LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
-        end
-    end
-end)
-
--- Hide GUI Button
-local hideBtn = Instance.new("TextButton", ScreenGui)
-hideBtn.Size = UDim2.new(0, 100, 0, 30)
-hideBtn.Position = UDim2.new(0, 5, 0, 270)
-hideBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-hideBtn.Text = "Hide GUI"
-hideBtn.TextColor3 = Color3.new(1, 1, 1)
-hideBtn.Font = Enum.Font.SourceSansBold
-hideBtn.TextSize = 14
-hideBtn.Draggable = true
-hideBtn.MouseButton1Click:Connect(function()
-    mainFrame.Visible = not mainFrame.Visible
-    hideBtn.Text = mainFrame.Visible and "Hide GUI" or "Show GUI"
 end)
