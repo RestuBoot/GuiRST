@@ -1,118 +1,75 @@
--- RstHUB GUI Script
--- Dibuat untuk PlayerList custom, draggable + animasi
-
--- Hapus GUI lama kalau ada
-if game.CoreGui:FindFirstChild("RstHUB") then
-    game.CoreGui.RstHUB:Destroy()
-end
-
-local TweenService = game:GetService("TweenService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+-- RstHUB dengan Teleport ke Pemain
+-- By RestuBoot
 
 -- Buat ScreenGui
-local gui = Instance.new("ScreenGui")
-gui.Name = "RstHUB"
-gui.ResetOnSpawn = false
-gui.Parent = game.CoreGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "RstHUB"
+ScreenGui.Parent = game:GetService("CoreGui")
 
--- Tombol toggle (kecil, bulat, draggable)
-local toggleButton = Instance.new("TextButton")
-toggleButton.Name = "Toggle"
-toggleButton.Size = UDim2.new(0,40,0,40)
-toggleButton.Position = UDim2.new(0.05,0,0.5,0)
-toggleButton.Text = "≡"
-toggleButton.TextSize = 18
-toggleButton.BackgroundColor3 = Color3.fromRGB(255, 221, 0)
-toggleButton.TextColor3 = Color3.fromRGB(0,0,0)
-toggleButton.BorderSizePixel = 0
-toggleButton.Parent = gui
-toggleButton.AutoButtonColor = true
-toggleButton.Active = true
-toggleButton.Draggable = true
-toggleButton.AnchorPoint = Vector2.new(0.5,0.5)
-toggleButton.Font = Enum.Font.SourceSansBold
-toggleButton.TextScaled = true
-toggleButton.TextWrapped = true
-toggleButton.BackgroundTransparency = 0.1
-toggleButton.UICorner = Instance.new("UICorner", toggleButton)
-toggleButton.UICorner.CornerRadius = UDim.new(1,0)
-
--- Frame utama (draggable + animasi buka/tutup)
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0,250,0,300)
-mainFrame.Position = UDim2.new(0.5,-125,0.5,-150)
-mainFrame.BackgroundColor3 = Color3.fromRGB(255, 221, 0)
-mainFrame.BorderSizePixel = 0
-mainFrame.Visible = false
-mainFrame.Active = true
-mainFrame.Draggable = true
-mainFrame.Parent = gui
-Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0,12)
+-- Buat Frame Utama
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 250, 0, 300)
+MainFrame.Position = UDim2.new(0.3, 0, 0.2, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
 
 -- Judul
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1,0,0,30)
-title.BackgroundTransparency = 1
-title.Text = "RstHUB PlayerList"
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 20
-title.TextColor3 = Color3.fromRGB(0,0,0)
-title.Parent = mainFrame
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
+Title.Text = "RstHUB - Teleport"
+Title.TextColor3 = Color3.fromRGB(0, 0, 0)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 18
+Title.Parent = MainFrame
 
--- Scrolling list
-local scrollingFrame = Instance.new("ScrollingFrame")
-scrollingFrame.Size = UDim2.new(1,-10,1,-40)
-scrollingFrame.Position = UDim2.new(0,5,0,35)
-scrollingFrame.CanvasSize = UDim2.new(0,0,0,0)
-scrollingFrame.ScrollBarThickness = 6
-scrollingFrame.ScrollingDirection = Enum.ScrollingDirection.Y
-scrollingFrame.Parent = mainFrame
+-- Scrolling untuk daftar pemain
+local PlayerList = Instance.new("ScrollingFrame")
+PlayerList.Size = UDim2.new(1, -10, 1, -40)
+PlayerList.Position = UDim2.new(0, 5, 0, 35)
+PlayerList.CanvasSize = UDim2.new(0, 0, 0, 0)
+PlayerList.ScrollBarThickness = 6
+PlayerList.BackgroundColor3 = Color3.fromRGB(240, 240, 200)
+PlayerList.BorderSizePixel = 0
+PlayerList.Parent = MainFrame
 
-local UIListLayout = Instance.new("UIListLayout")
-UIListLayout.Padding = UDim.new(0,5)
-UIListLayout.Parent = scrollingFrame
+-- Template Button untuk pemain
+local function CreatePlayerButton(player)
+    local Btn = Instance.new("TextButton")
+    Btn.Size = UDim2.new(1, -10, 0, 30)
+    Btn.Position = UDim2.new(0, 5, 0, (#PlayerList:GetChildren()-1) * 35)
+    Btn.BackgroundColor3 = Color3.fromRGB(255, 255, 150)
+    Btn.Text = player.Name
+    Btn.TextColor3 = Color3.fromRGB(0, 0, 0)
+    Btn.Font = Enum.Font.SourceSansBold
+    Btn.TextSize = 16
+    Btn.Parent = PlayerList
 
--- Template player label
-local function createPlayerLabel(player)
-    local lbl = Instance.new("TextLabel")
-    lbl.Size = UDim2.new(1,-5,0,30)
-    lbl.BackgroundColor3 = Color3.fromRGB(255,255,255)
-    lbl.Text = player.Name
-    lbl.Font = Enum.Font.SourceSans
-    lbl.TextSize = 16
-    lbl.TextColor3 = Color3.fromRGB(0,0,0)
-    lbl.Parent = scrollingFrame
-    Instance.new("UICorner", lbl).CornerRadius = UDim.new(0,8)
-    return lbl
+    Btn.MouseButton1Click:Connect(function()
+        local LocalPlayer = game.Players.LocalPlayer
+        if LocalPlayer.Character and player.Character then
+            LocalPlayer.Character:MoveTo(player.Character.PrimaryPart.Position + Vector3.new(2,0,2))
+        end
+    end)
 end
 
--- Fungsi update player list
-local function updatePlayers()
-    scrollingFrame:ClearAllChildren()
-    UIListLayout.Parent = scrollingFrame
-    for _,plr in ipairs(Players:GetPlayers()) do
-        createPlayerLabel(plr)
+-- Update daftar pemain
+local function RefreshPlayers()
+    PlayerList:ClearAllChildren()
+    for _, p in ipairs(game.Players:GetPlayers()) do
+        if p ~= game.Players.LocalPlayer then
+            CreatePlayerButton(p)
+        end
     end
-    scrollingFrame.CanvasSize = UDim2.new(0,0,0,UIListLayout.AbsoluteContentSize.Y+10)
+    PlayerList.CanvasSize = UDim2.new(0,0,0,#game.Players:GetPlayers()*35)
 end
 
--- Event join/leave
-Players.PlayerAdded:Connect(updatePlayers)
-Players.PlayerRemoving:Connect(updatePlayers)
+-- Event update otomatis
+game.Players.PlayerAdded:Connect(RefreshPlayers)
+game.Players.PlayerRemoving:Connect(RefreshPlayers)
 
--- Toggle animasi buka/tutup
-local open = false
-toggleButton.MouseButton1Click:Connect(function()
-    open = not open
-    if open then
-        mainFrame.Visible = true
-        mainFrame.Size = UDim2.new(0,0,0,0)
-        TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0,250,0,300)}):Play()
-        updatePlayers()
-    else
-        TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0,0,0,0)}):Play()
-        task.wait(0.3)
-        mainFrame.Visible = false
-    end
-end)
+-- Pertama kali dijalankan
+RefreshPlayers()
