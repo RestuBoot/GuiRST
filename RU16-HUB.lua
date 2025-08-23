@@ -1,100 +1,65 @@
--- RstHUB GUI Full Revisi (Toggle Button kecil)
+-- RstHUB GUI Script with draggable main GUI, player list, and teleport buttons local Players = game:GetService("Players") local player = Players.LocalPlayer local playerGui = player:WaitForChild("PlayerGui")
 
--- Buat ScreenGui
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "RstHUB"
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+-- ScreenGui local screenGui = Instance.new("ScreenGui") screenGui.Name = "RstHUB_GUI" screenGui.Parent = playerGui
 
--- Tombol Open/Close (kecil seperti icon)
-local toggleButton = Instance.new("TextButton")
-toggleButton.Size = UDim2.new(0, 40, 0, 40)
-toggleButton.Position = UDim2.new(0, 50, 0, 200)
-toggleButton.BackgroundColor3 = Color3.fromRGB(255, 223, 0)
-toggleButton.Text = "≡"
-toggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-toggleButton.Font = Enum.Font.GothamBold
-toggleButton.TextSize = 20
-toggleButton.Parent = screenGui
-toggleButton.Draggable = true
-toggleButton.Active = true
+-- Main Frame local mainFrame = Instance.new("Frame") mainFrame.Name = "MainFrame" mainFrame.Size = UDim2.new(0, 300, 0, 400) mainFrame.Position = UDim2.new(0.5, -150, 0.5, -200) mainFrame.BackgroundColor3 = Color3.fromRGB(255, 215, 0) -- Yellow mainFrame.AnchorPoint = Vector2.new(0.5, 0.5) mainFrame.Parent = screenGui mainFrame.BackgroundTransparency = 0.1 mainFrame.ClipsDescendants = true mainFrame.BorderSizePixel = 0
 
-local UICornerBtn = Instance.new("UICorner")
-UICornerBtn.CornerRadius = UDim.new(0, 8)
-UICornerBtn.Parent = toggleButton
+-- UICorner for rounded edges local uiCorner = Instance.new("UICorner") uiCorner.CornerRadius = UDim.new(0, 12) uiCorner.Parent = mainFrame
 
--- Main Frame (GUI Utama)
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 250, 0, 300)
-mainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-mainFrame.BackgroundColor3 = Color3.fromRGB(255, 223, 0)
-mainFrame.BorderSizePixel = 0
-mainFrame.Visible = false
-mainFrame.Parent = screenGui
-mainFrame.Draggable = true
-mainFrame.Active = true
+-- Header Label with name local headerLabel = Instance.new("TextLabel") headerLabel.Size = UDim2.new(1, 0, 0, 30) headerLabel.Position = UDim2.new(0, 0, 0, 0) headerLabel.BackgroundTransparency = 1 headerLabel.Text = "RST HUB" headerLabel.Font = Enum.Font.SourceSansBold headerLabel.TextSize = 18 headerLabel.TextColor3 = Color3.fromRGB(0, 0, 0) headerLabel.Parent = mainFrame
 
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 12)
-UICorner.Parent = mainFrame
+-- Toggle Button (small) local toggleButton = Instance.new("TextButton") toggleButton.Size = UDim2.new(0, 30, 0, 30) toggleButton.Position = UDim2.new(1, -35, 0, 5) toggleButton.Text = "" toggleButton.BackgroundColor3 = Color3.fromRGB(255, 215, 0) toggleButton.Parent = mainFrame
 
--- Scroll Player List
-local playerList = Instance.new("ScrollingFrame")
-playerList.Size = UDim2.new(1, -10, 1, -10)
-playerList.Position = UDim2.new(0, 5, 0, 5)
-playerList.CanvasSize = UDim2.new(0, 0, 0, 0)
-playerList.ScrollBarThickness = 6
-playerList.BackgroundTransparency = 1
-playerList.Parent = mainFrame
+local toggleCorner = Instance.new("UICorner") toggleCorner.CornerRadius = UDim.new(0, 5) toggleCorner.Parent = toggleButton
 
-local UIListLayout = Instance.new("UIListLayout")
-UIListLayout.Parent = playerList
-UIListLayout.Padding = UDim.new(0, 5)
+local isVisible = true
 
--- Fungsi tambah tombol pemain
-local function addPlayerButton(plr)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -10, 0, 30)
-    btn.BackgroundColor3 = Color3.fromRGB(255, 255, 200)
-    btn.Text = plr.Name
-    btn.TextColor3 = Color3.fromRGB(0, 0, 0)
-    btn.Font = Enum.Font.Gotham
-    btn.TextSize = 14
-    btn.Parent = playerList
+toggleButton.MouseButton1Click:Connect(function() isVisible = not isVisible mainFrame.Visible = isVisible end)
 
-    btn.MouseButton1Click:Connect(function()
-        local lp = game.Players.LocalPlayer
-        if lp.Character and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-            lp.Character:MoveTo(plr.Character.HumanoidRootPart.Position + Vector3.new(2,0,0))
-        end
-    end)
+-- Player list frame local playerListFrame = Instance.new("ScrollingFrame") playerListFrame.Size = UDim2.new(1, -20, 1, -40) playerListFrame.Position = UDim2.new(0, 10, 0, 35) playerListFrame.BackgroundTransparency = 1 playerListFrame.ScrollBarThickness = 6 playerListFrame.Parent = mainFrame
+
+local uiLayout = Instance.new("UIListLayout") uiLayout.Padding = UDim.new(0, 5) uiLayout.SortOrder = Enum.SortOrder.LayoutOrder uiLayout.Parent = playerListFrame
+
+-- Function to create teleport button for each player local function addPlayerButton(p) local button = Instance.new("TextButton") button.Size = UDim2.new(1, 0, 0, 30) button.BackgroundColor3 = Color3.fromRGB(200, 200, 200) button.TextColor3 = Color3.fromRGB(0, 0, 0) button.Text = p.Name button.Parent = playerListFrame
+
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 5)
+buttonCorner.Parent = button
+
+button.MouseButton1Click:Connect(function()
+    if p.Character and p.Character:FindFirstChild("HumanoidRootPart") and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        player.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame
+    end
+end)
+
 end
 
--- Tambahkan player yang sudah ada
-for _,plr in ipairs(game.Players:GetPlayers()) do
-    if plr ~= game.Players.LocalPlayer then
-        addPlayerButton(plr)
+-- Track players dynamically local playerButtons = {}
+
+local function refreshPlayers() -- Clear frame for _, btn in pairs(playerButtons) do btn:Destroy() end playerButtons = {}
+
+for _, p in pairs(Players:GetPlayers()) do
+    if p ~= player then
+        local btn = addPlayerButton(p)
+        table.insert(playerButtons, btn)
     end
 end
 
--- Update saat player join
-game.Players.PlayerAdded:Connect(function(plr)
-    if plr ~= game.Players.LocalPlayer then
-        addPlayerButton(plr)
-    end
-end)
+end
 
--- Update saat player keluar
-game.Players.PlayerRemoving:Connect(function(plr)
-    for _,btn in ipairs(playerList:GetChildren()) do
-        if btn:IsA("TextButton") and btn.Text == plr.Name then
-            btn:Destroy()
-        end
-    end
-end)
+Players.PlayerAdded:Connect(function(p) refreshPlayers() end)
 
--- Fungsi Open/Close
-local isOpen = false
-toggleButton.MouseButton1Click:Connect(function()
-    isOpen = not isOpen
-    mainFrame.Visible = isOpen
-end)
+Players.PlayerRemoving:Connect(function(p) refreshPlayers() end)
+
+-- Initial population refreshPlayers()
+
+-- Draggable Function local UserInputService = game:GetService("UserInputService") local dragging = false local dragInput, mousePos, framePos
+
+local function update(input) local delta = input.Position - mousePos mainFrame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y) end
+
+headerLabel.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true mousePos = input.Position framePos = mainFrame.Position input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end) end end)
+
+headerLabel.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end end)
+
+UserInputService.InputChanged:Connect(function(input) if input == dragInput and dragging then update(input) end end)
+
