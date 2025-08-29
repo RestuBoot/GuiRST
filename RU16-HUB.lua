@@ -1,65 +1,194 @@
--- RstHUB GUI Script with draggable main GUI, player list, and teleport buttons local Players = game:GetService("Players") local player = Players.LocalPlayer local playerGui = player:WaitForChild("PlayerGui")
+-- Stylish Teleport GUI (Mobile + PC, Draggable)
+-- By ChatGPT
 
--- ScreenGui local screenGui = Instance.new("ScreenGui") screenGui.Name = "RstHUB_GUI" screenGui.Parent = playerGui
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
 
--- Main Frame local mainFrame = Instance.new("Frame") mainFrame.Name = "MainFrame" mainFrame.Size = UDim2.new(0, 300, 0, 400) mainFrame.Position = UDim2.new(0.5, -150, 0.5, -200) mainFrame.BackgroundColor3 = Color3.fromRGB(255, 215, 0) -- Yellow mainFrame.AnchorPoint = Vector2.new(0.5, 0.5) mainFrame.Parent = screenGui mainFrame.BackgroundTransparency = 0.1 mainFrame.ClipsDescendants = true mainFrame.BorderSizePixel = 0
+-- ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.CoreGui
 
--- UICorner for rounded edges local uiCorner = Instance.new("UICorner") uiCorner.CornerRadius = UDim.new(0, 12) uiCorner.Parent = mainFrame
+-- Tombol Open
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Size = UDim2.new(0, 60, 0, 30)
+ToggleBtn.Position = UDim2.new(0.02, 0, 0.2, 0)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
+ToggleBtn.TextColor3 = Color3.new(0,0,0)
+ToggleBtn.Text = "TP"
+ToggleBtn.Font = Enum.Font.SourceSansBold
+ToggleBtn.TextSize = 16
+ToggleBtn.Parent = ScreenGui
 
--- Header Label with name local headerLabel = Instance.new("TextLabel") headerLabel.Size = UDim2.new(1, 0, 0, 30) headerLabel.Position = UDim2.new(0, 0, 0, 0) headerLabel.BackgroundTransparency = 1 headerLabel.Text = "RST HUB" headerLabel.Font = Enum.Font.SourceSansBold headerLabel.TextSize = 18 headerLabel.TextColor3 = Color3.fromRGB(0, 0, 0) headerLabel.Parent = mainFrame
+local UICorner1 = Instance.new("UICorner")
+UICorner1.CornerRadius = UDim.new(0, 8)
+UICorner1.Parent = ToggleBtn
 
--- Toggle Button (small) local toggleButton = Instance.new("TextButton") toggleButton.Size = UDim2.new(0, 30, 0, 30) toggleButton.Position = UDim2.new(1, -35, 0, 5) toggleButton.Text = "" toggleButton.BackgroundColor3 = Color3.fromRGB(255, 215, 0) toggleButton.Parent = mainFrame
+-- Frame utama
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 200, 0, 250)
+MainFrame.Position = UDim2.new(0.05, 0, 0.25, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Visible = false
+MainFrame.Parent = ScreenGui
 
-local toggleCorner = Instance.new("UICorner") toggleCorner.CornerRadius = UDim.new(0, 5) toggleCorner.Parent = toggleButton
+local UICorner2 = Instance.new("UICorner")
+UICorner2.CornerRadius = UDim.new(0, 12)
+UICorner2.Parent = MainFrame
 
-local isVisible = true
+-- Judul (buat drag)
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
+Title.Text = "Teleport Menu"
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 18
+Title.TextColor3 = Color3.new(0,0,0)
+Title.Parent = MainFrame
 
-toggleButton.MouseButton1Click:Connect(function() isVisible = not isVisible mainFrame.Visible = isVisible end)
+local UICorner3 = Instance.new("UICorner")
+UICorner3.CornerRadius = UDim.new(0, 8)
+UICorner3.Parent = Title
 
--- Player list frame local playerListFrame = Instance.new("ScrollingFrame") playerListFrame.Size = UDim2.new(1, -20, 1, -40) playerListFrame.Position = UDim2.new(0, 10, 0, 35) playerListFrame.BackgroundTransparency = 1 playerListFrame.ScrollBarThickness = 6 playerListFrame.Parent = mainFrame
+-- Scroll List
+local PlayerList = Instance.new("ScrollingFrame")
+PlayerList.Size = UDim2.new(1, -10, 1, -45)
+PlayerList.Position = UDim2.new(0,5,0,40)
+PlayerList.CanvasSize = UDim2.new(0,0,0,0)
+PlayerList.ScrollBarThickness = 4
+PlayerList.BackgroundTransparency = 1
+PlayerList.Parent = MainFrame
 
-local uiLayout = Instance.new("UIListLayout") uiLayout.Padding = UDim.new(0, 5) uiLayout.SortOrder = Enum.SortOrder.LayoutOrder uiLayout.Parent = playerListFrame
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Parent = PlayerList
+UIListLayout.Padding = UDim.new(0, 4)
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
--- Function to create teleport button for each player local function addPlayerButton(p) local button = Instance.new("TextButton") button.Size = UDim2.new(1, 0, 0, 30) button.BackgroundColor3 = Color3.fromRGB(200, 200, 200) button.TextColor3 = Color3.fromRGB(0, 0, 0) button.Text = p.Name button.Parent = playerListFrame
+-- Tombol Close
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Size = UDim2.new(0, 60, 0, 25)
+CloseBtn.Position = UDim2.new(1, -65, 0, 5)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseBtn.TextColor3 = Color3.new(1,1,1)
+CloseBtn.Text = "X"
+CloseBtn.Font = Enum.Font.SourceSansBold
+CloseBtn.TextSize = 16
+CloseBtn.Parent = MainFrame
 
-local buttonCorner = Instance.new("UICorner")
-buttonCorner.CornerRadius = UDim.new(0, 5)
-buttonCorner.Parent = button
+local UICorner4 = Instance.new("UICorner")
+UICorner4.CornerRadius = UDim.new(0, 8)
+UICorner4.Parent = CloseBtn
 
-button.MouseButton1Click:Connect(function()
-    if p.Character and p.Character:FindFirstChild("HumanoidRootPart") and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-        player.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame
+-- Fungsi teleport
+local function teleportToPlayer(targetPlayer)
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local targetHRP = targetPlayer.Character.HumanoidRootPart
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            LocalPlayer.Character.HumanoidRootPart.CFrame = targetHRP.CFrame + Vector3.new(0,3,0)
+        end
+    end
+end
+
+-- Tambah button player
+local function addPlayerButton(player)
+    local Btn = Instance.new("TextButton")
+    Btn.Size = UDim2.new(1, -6, 0, 28)
+    Btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Btn.TextColor3 = Color3.fromRGB(255, 200, 0)
+    Btn.Text = player.Name
+    Btn.Font = Enum.Font.SourceSansBold
+    Btn.TextSize = 16
+    Btn.Parent = PlayerList
+
+    local UIC = Instance.new("UICorner")
+    UIC.CornerRadius = UDim.new(0, 6)
+    UIC.Parent = Btn
+
+    Btn.MouseButton1Click:Connect(function()
+        teleportToPlayer(player)
+    end)
+
+    player.AncestryChanged:Connect(function(_, parent)
+        if not parent then
+            Btn:Destroy()
+        end
+    end)
+end
+
+-- Refresh player list
+local function refreshPlayers()
+    for _, child in pairs(PlayerList:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer then
+            addPlayerButton(p)
+        end
+    end
+end
+
+-- Event player masuk/keluar
+Players.PlayerAdded:Connect(function(p)
+    if p ~= LocalPlayer then
+        addPlayerButton(p)
     end
 end)
 
-end
-
--- Track players dynamically local playerButtons = {}
-
-local function refreshPlayers() -- Clear frame for _, btn in pairs(playerButtons) do btn:Destroy() end playerButtons = {}
-
-for _, p in pairs(Players:GetPlayers()) do
-    if p ~= player then
-        local btn = addPlayerButton(p)
-        table.insert(playerButtons, btn)
+Players.PlayerRemoving:Connect(function(p)
+    for _, btn in pairs(PlayerList:GetChildren()) do
+        if btn:IsA("TextButton") and btn.Text == p.Name then
+            btn:Destroy()
+        end
     end
+end)
+
+-- Event tombol
+ToggleBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+    if MainFrame.Visible then
+        refreshPlayers()
+    end
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+end)
+
+-- 🔥 Bikin frame bisa digeser (draggable)
+local dragging, dragInput, dragStart, startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                                   startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 
-end
+Title.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
 
-Players.PlayerAdded:Connect(function(p) refreshPlayers() end)
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
 
-Players.PlayerRemoving:Connect(function(p) refreshPlayers() end)
+Title.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
 
--- Initial population refreshPlayers()
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
 
--- Draggable Function local UserInputService = game:GetService("UserInputService") local dragging = false local dragInput, mousePos, framePos
-
-local function update(input) local delta = input.Position - mousePos mainFrame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y) end
-
-headerLabel.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true mousePos = input.Position framePos = mainFrame.Position input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end) end end)
-
-headerLabel.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end end)
-
-UserInputService.InputChanged:Connect(function(input) if input == dragInput and dragging then update(input) end end)
-
+print("Teleport GUI Stylish + Draggable Loaded! Tombol 'TP' ada di layar.")
