@@ -1,11 +1,8 @@
 --[[
-    UNIVERSAL HUB - MEGA EDITION
-    =============================
-    🔥 52 FITUR LENGKAP!
-    ✅ Work di Mobile (Codex) & PC
-    ✅ Horror, Movement, Visual, Troll, Protect, World, Utility
-    ✅ GUI 350x500 dengan 7 Tabs
-    ✅ Password: "CODEX2025"
+    UNIVERSAL HUB - MEGA EDITION (LENGKAP)
+    =======================================
+    🔐 Password: "CODEX2025"
+    ✅ 52 FITUR + GUI LENGKAP!
 ]]
 
 -- ========== PASSWORD SYSTEM ==========
@@ -88,7 +85,7 @@ pwSubmit.MouseButton1Click:Connect(function()
     end
 end)
 
--- ========== HUB UTAMA ==========
+-- ========== HUB UTAMA (LENGKAP DENGAN GUI) ==========
 function loadMainHub()
     -- Tunggu player
     repeat task.wait() until game.Players.LocalPlayer and game.Players.LocalPlayer.Character
@@ -96,7 +93,7 @@ function loadMainHub()
     local function getChar() return player.Character end
     local function getHum() local c = getChar() return c and c:FindFirstChildOfClass("Humanoid") end
     local function getRoot() local c = getChar() return c and c:FindFirstChild("HumanoidRootPart") end
-    
+
     -- Notifikasi
     local function notify(msg)
         pcall(function()
@@ -107,14 +104,12 @@ function loadMainHub()
             })
         end)
     end
-    
+
     -- Variables untuk toggle
     local features = {}
     local threads = {}
-    
-    -- ========== 1. HORROR FEATURES (15 FITUR) ==========
-    
-    -- 1.1 Headless
+
+    -- ========== 1. HORROR FEATURES ==========
     function toggleHeadless(state)
         features.headless = state
         local c = getChar()
@@ -124,8 +119,7 @@ function loadMainHub()
         end
         notify("👻 Headless " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.2 Zombie Walk
+
     function toggleZombie(state)
         features.zombie = state
         local h = getHum()
@@ -135,8 +129,7 @@ function loadMainHub()
         end
         notify("🧟 Zombie " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.3 Red Eyes
+
     function toggleRedEyes(state)
         features.redEyes = state
         local c = getChar()
@@ -149,7 +142,7 @@ function loadMainHub()
                 eye1.Material = Enum.Material.Neon
                 eye1.Position = c.Head.Position + Vector3.new(-0.25, 0.2, 0.5)
                 eye1.Parent = c.Head
-                
+
                 local eye2 = Instance.new("Part")
                 eye2.Name = "RedEye_R"
                 eye2.Size = Vector3.new(0.3, 0.3, 0.3)
@@ -166,8 +159,7 @@ function loadMainHub()
         end
         notify("👁️ Red Eyes " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.4 Blood Effect
+
     function toggleBlood(state)
         features.blood = state
         if state then
@@ -189,8 +181,7 @@ function loadMainHub()
         end
         notify("🩸 Blood " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.5 Darkness
+
     function toggleDarkness(state)
         features.darkness = state
         if state then
@@ -207,16 +198,15 @@ function loadMainHub()
         end
         notify("🌑 Darkness " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.6 Scary Sound
+
     function toggleScarySound(state)
         features.scarySound = state
         if state then
             threads.scarySound = task.spawn(function()
                 local sounds = {
-                    "rbxassetid://9120386233", -- OOF
-                    "rbxassetid://9119439489", -- Vine boom
-                    "rbxassetid://166113339",  -- Scream
+                    "rbxassetid://9120386233",
+                    "rbxassetid://9119439489",
+                    "rbxassetid://166113339",
                 }
                 while features.scarySound do
                     local s = Instance.new("Sound")
@@ -231,8 +221,7 @@ function loadMainHub()
         end
         notify("🔊 Scary Sound " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.7 Screaming Face
+
     function toggleScreamFace(state)
         features.screamFace = state
         local c = getChar()
@@ -250,8 +239,7 @@ function loadMainHub()
         end
         notify("😱 Scream Face " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.8 Shake Camera
+
     function toggleShakeCam(state)
         features.shakeCam = state
         if state then
@@ -267,8 +255,7 @@ function loadMainHub()
         end
         notify("📷 Shake Cam " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.9 Chase Music
+
     function toggleChaseMusic(state)
         features.chaseMusic = state
         if state then
@@ -286,8 +273,7 @@ function loadMainHub()
         end
         notify("🎵 Chase Music " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.10 Invert Colors
+
     function toggleInvertColors(state)
         features.invertColors = state
         if state then
@@ -303,8 +289,7 @@ function loadMainHub()
         end
         notify("🎨 Invert Colors " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.11 Floating Head
+
     function toggleFloatingHead(state)
         features.floatingHead = state
         local c = getChar()
@@ -323,8 +308,7 @@ function loadMainHub()
         end
         notify("🎭 Floating Head " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.12 Ghost Mode
+
     function toggleGhost(state)
         features.ghost = state
         local c = getChar()
@@ -337,8 +321,7 @@ function loadMainHub()
         end
         notify("👻 Ghost Mode " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.13 Blood Rain
+
     function toggleBloodRain(state)
         features.bloodRain = state
         if state then
@@ -360,8 +343,7 @@ function loadMainHub()
         end
         notify("🌧️ Blood Rain " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.14 Whisper Sound
+
     function toggleWhisper(state)
         features.whisper = state
         if state then
@@ -379,8 +361,7 @@ function loadMainHub()
         end
         notify("🤫 Whisper " .. (state and "ON" or "OFF"))
     end
-    
-    -- 1.15 Jump Scare
+
     function toggleJumpScare(state)
         features.jumpScare = state
         if state then
@@ -409,26 +390,22 @@ function loadMainHub()
         end
         notify("😨 Jump Scare " .. (state and "ON" or "OFF"))
     end
-    
-    -- ========== 2. MOVEMENT FEATURES (7 FITUR) ==========
-    
-    -- 2.1 Speed Boost
+
+    -- ========== 2. MOVEMENT FEATURES ==========
     function toggleSpeed(state)
         features.speed = state
         local h = getHum()
         if h then h.WalkSpeed = state and 50 or 16 end
         notify("⚡ Speed " .. (state and "ON" or "OFF"))
     end
-    
-    -- 2.2 Jump Power
+
     function toggleJump(state)
         features.jump = state
         local h = getHum()
         if h then h.JumpPower = state and 100 or 50 end
         notify("🦘 Jump " .. (state and "ON" or "OFF"))
     end
-    
-    -- 2.3 Infinity Jump
+
     function toggleInfJump(state)
         features.infJump = state
         if state then
@@ -442,8 +419,7 @@ function loadMainHub()
         end
         notify("🔁 Infinity Jump " .. (state and "ON" or "OFF"))
     end
-    
-    -- 2.4 Spin
+
     function toggleSpin(state)
         features.spin = state
         if state then
@@ -457,8 +433,7 @@ function loadMainHub()
         end
         notify("🌀 Spin " .. (state and "ON" or "OFF"))
     end
-    
-    -- 2.5 NoClip
+
     function toggleNoClip(state)
         features.noclip = state
         if state then
@@ -476,8 +451,7 @@ function loadMainHub()
         end
         notify("🧱 NoClip " .. (state and "ON" or "OFF"))
     end
-    
-    -- 2.6 Fly (WORK DI MOBILE!)
+
     function toggleFly(state)
         features.fly = state
         if state then
@@ -509,8 +483,7 @@ function loadMainHub()
         end
         notify("🕊️ Fly " .. (state and "ON" or "OFF"))
     end
-    
-    -- 2.7 Swim in Air
+
     function toggleSwimAir(state)
         features.swimAir = state
         local h = getHum()
@@ -524,10 +497,8 @@ function loadMainHub()
         end
         notify("🏊 Swim in Air " .. (state and "ON" or "OFF"))
     end
-    
-    -- ========== 3. VISUAL FEATURES (7 FITUR) ==========
-    
-    -- 3.1 ESP
+
+    -- ========== 3. VISUAL FEATURES ==========
     function toggleESP(state)
         features.esp = state
         if state then
@@ -557,8 +528,7 @@ function loadMainHub()
         end
         notify("👁️ ESP " .. (state and "ON" or "OFF"))
     end
-    
-    -- 3.2 Rainbow
+
     function toggleRainbow(state)
         features.rainbow = state
         if state then
@@ -578,8 +548,7 @@ function loadMainHub()
         end
         notify("🌈 Rainbow " .. (state and "ON" or "OFF"))
     end
-    
-    -- 3.3 Name ESP
+
     function toggleNameESP(state)
         features.nameESP = state
         if state then
@@ -611,8 +580,7 @@ function loadMainHub()
         end
         notify("🏷️ Name ESP " .. (state and "ON" or "OFF"))
     end
-    
-    -- 3.4 Tracer ESP
+
     function toggleTracer(state)
         features.tracer = state
         if state then
@@ -637,8 +605,7 @@ function loadMainHub()
         end
         notify("📍 Tracer ESP " .. (state and "ON" or "OFF"))
     end
-    
-    -- 3.5 Box ESP
+
     function toggleBoxESP(state)
         features.boxESP = state
         if state then
@@ -665,8 +632,7 @@ function loadMainHub()
         end
         notify("📦 Box ESP " .. (state and "ON" or "OFF"))
     end
-    
-    -- 3.6 Health Bar
+
     function toggleHealthBar(state)
         features.healthBar = state
         if state then
@@ -700,8 +666,7 @@ function loadMainHub()
         end
         notify("❤️ Health Bar " .. (state and "ON" or "OFF"))
     end
-    
-    -- 3.7 Distance ESP
+
     function toggleDistance(state)
         features.distance = state
         if state then
@@ -741,10 +706,8 @@ function loadMainHub()
         end
         notify("📏 Distance ESP " .. (state and "ON" or "OFF"))
     end
-    
-    -- ========== 4. TROLL FEATURES (10 FITUR) ==========
-    
-    -- 4.1 Giant Head
+
+    -- ========== 4. TROLL FEATURES ==========
     function toggleGiantHead(state)
         features.giantHead = state
         local c = getChar()
@@ -758,8 +721,7 @@ function loadMainHub()
         end
         notify("🗿 Giant Head " .. (state and "ON" or "OFF"))
     end
-    
-    -- 4.2 Tiny Body
+
     function toggleTinyBody(state)
         features.tinyBody = state
         local c = getChar()
@@ -772,8 +734,7 @@ function loadMainHub()
         end
         notify("🐜 Tiny Body " .. (state and "ON" or "OFF"))
     end
-    
-    -- 4.3 Long Neck
+
     function toggleLongNeck(state)
         features.longNeck = state
         local c = getChar()
@@ -784,8 +745,7 @@ function loadMainHub()
         end
         notify("🦒 Long Neck " .. (state and "ON" or "OFF"))
     end
-    
-    -- 4.4 Upside Down
+
     function toggleUpsideDown(state)
         features.upsideDown = state
         local c = getChar()
@@ -796,8 +756,7 @@ function loadMainHub()
         end
         notify("🙃 Upside Down " .. (state and "ON" or "OFF"))
     end
-    
-    -- 4.5 Spinbot
+
     function toggleSpinbot(state)
         features.spinbot = state
         if state then
@@ -813,8 +772,7 @@ function loadMainHub()
         end
         notify("🌀 Spinbot " .. (state and "ON" or "OFF"))
     end
-    
-    -- 4.6 Fake Lag
+
     function toggleFakeLag(state)
         features.fakeLag = state
         if state then
@@ -830,24 +788,24 @@ function loadMainHub()
         end
         notify("🐢 Fake Lag " .. (state and "ON" or "OFF"))
     end
-    
-    -- 4.7 Chat Spam
+
     function toggleChatSpam(state)
         features.chatSpam = state
         if state then
             threads.chatSpam = task.spawn(function()
                 local msgs = {"🔥 MEGA HUB", "💀 TROLL", "🎉 GG", "👋 EZ", "🤡 LOL"}
                 while features.chatSpam do
-                    game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents") and
-                    game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msgs[math.random(1, #msgs)], "All")
+                    local chat = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents")
+                    if chat and chat:FindFirstChild("SayMessageRequest") then
+                        chat.SayMessageRequest:FireServer(msgs[math.random(1, #msgs)], "All")
+                    end
                     task.wait(1)
                 end
             end)
         end
         notify("💬 Chat Spam " .. (state and "ON" or "OFF"))
     end
-    
-    -- 4.8 Sound Spam
+
     function toggleSoundSpam(state)
         features.soundSpam = state
         if state then
@@ -865,13 +823,8 @@ function loadMainHub()
         end
         notify("🔊 Sound Spam " .. (state and "ON" or "OFF"))
     end
-    
-    -- 4.9 Headless (already added)
-    -- 4.10 Zombie (already added)
-    
-    -- ========== 5. PROTECTION FEATURES (4 FITUR) ==========
-    
-    -- 5.1 God Mode
+
+    -- ========== 5. PROTECTION FEATURES ==========
     function toggleGod(state)
         features.god = state
         local h = getHum()
@@ -886,8 +839,7 @@ function loadMainHub()
         end
         notify("👑 God Mode " .. (state and "ON" or "OFF"))
     end
-    
-    -- 5.2 No Fall
+
     function toggleNoFall(state)
         features.nofall = state
         if state then
@@ -903,8 +855,7 @@ function loadMainHub()
         end
         notify("📉 No Fall " .. (state and "ON" or "OFF"))
     end
-    
-    -- 5.3 Auto Respawn
+
     function toggleAutoRespawn(state)
         features.respawn = state
         if state then
@@ -917,8 +868,7 @@ function loadMainHub()
         end
         notify("🔄 Auto Respawn " .. (state and "ON" or "OFF"))
     end
-    
-    -- 5.4 Anti Kick
+
     function toggleAntiKick(state)
         features.antikick = state
         if state then
@@ -937,10 +887,8 @@ function loadMainHub()
         end
         notify("🛡️ Anti Kick " .. (state and "ON" or "OFF"))
     end
-    
-    -- ========== 6. WORLD FEATURES (5 FITUR) ==========
-    
-    -- 6.1 Time Changer
+
+    -- ========== 6. WORLD FEATURES ==========
     function toggleTime(state)
         features.time = state
         if state then
@@ -956,8 +904,7 @@ function loadMainHub()
         end
         notify("⏰ Time Changer " .. (state and "ON" or "OFF"))
     end
-    
-    -- 6.2 Gravity
+
     function toggleGravity(state)
         features.gravity = state
         if state then
@@ -971,8 +918,7 @@ function loadMainHub()
         end
         notify("🌎 Gravity " .. (state and "ON" or "OFF"))
     end
-    
-    -- 6.3 Fog
+
     function toggleFog(state)
         features.fog = state
         if state then
@@ -986,8 +932,7 @@ function loadMainHub()
         end
         notify("🌫️ Fog " .. (state and "ON" or "OFF"))
     end
-    
-    -- 6.4 Skybox
+
     function toggleSkybox(state)
         features.skybox = state
         if state then
@@ -1010,8 +955,7 @@ function loadMainHub()
         end
         notify("☁️ Skybox " .. (state and "ON" or "OFF"))
     end
-    
-    -- 6.5 Neon World
+
     function toggleNeonWorld(state)
         features.neon = state
         if state then
@@ -1028,10 +972,8 @@ function loadMainHub()
         end
         notify("💡 Neon World " .. (state and "ON" or "OFF"))
     end
-    
-    -- ========== 7. UTILITY FEATURES (4 FITUR) ==========
-    
-    -- 7.1 Auto Click
+
+    -- ========== 7. UTILITY FEATURES ==========
     function toggleAutoClick(state)
         features.autoclick = state
         if state then
@@ -1044,13 +986,11 @@ function loadMainHub()
         end
         notify("🖱️ Auto Click " .. (state and "ON" or "OFF"))
     end
-    
-    -- 7.2 Rejoin
+
     function rejoinServer()
         game:GetService("TeleportService"):Teleport(game.PlaceId, player)
     end
-    
-    -- 7.3 Server Hop
+
     function serverHop()
         local servers = {}
         local suc, res = pcall(function()
@@ -1072,20 +1012,19 @@ function loadMainHub()
             notify("❌ No servers available")
         end
     end
-    
-    -- 7.4 Infinite Yield
+
     function loadIY()
         notify("📦 Loading IY...")
         pcall(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
         end)
     end
-    
+
     -- ========== GUI UTAMA ==========
     local gui = Instance.new("ScreenGui")
     gui.Name = "MegaHub"
     gui.Parent = game.CoreGui
-    
+
     local main = Instance.new("Frame")
     main.Size = UDim2.new(0, 350, 0, 500)
     main.Position = UDim2.new(0.5, -175, 0.5, -250)
@@ -1094,21 +1033,21 @@ function loadMainHub()
     main.Active = true
     main.Draggable = true
     main.Parent = gui
-    
+
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 15)
     corner.Parent = main
-    
+
     local title = Instance.new("Frame")
     title.Size = UDim2.new(1, 0, 0, 40)
     title.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
     title.BorderSizePixel = 0
     title.Parent = main
-    
+
     local titleCorner = Instance.new("UICorner")
     titleCorner.CornerRadius = UDim.new(0, 15)
     titleCorner.Parent = title
-    
+
     local icon = Instance.new("TextLabel")
     icon.Size = UDim2.new(0, 30, 0, 30)
     icon.Position = UDim2.new(0, 10, 0.5, -15)
@@ -1118,7 +1057,7 @@ function loadMainHub()
     icon.TextColor3 = Color3.fromRGB(0, 200, 255)
     icon.Font = Enum.Font.SourceSans
     icon.Parent = title
-    
+
     local titleText = Instance.new("TextLabel")
     titleText.Size = UDim2.new(1, -80, 1, 0)
     titleText.Position = UDim2.new(0, 45, 0, 0)
@@ -1129,7 +1068,7 @@ function loadMainHub()
     titleText.TextXAlignment = "Left"
     titleText.Font = Enum.Font.GothamBold
     titleText.Parent = title
-    
+
     local close = Instance.new("TextButton")
     close.Size = UDim2.new(0, 30, 0, 30)
     close.Position = UDim2.new(1, -40, 0.5, -15)
@@ -1139,9 +1078,9 @@ function loadMainHub()
     close.TextSize = 18
     close.Font = Enum.Font.GothamBold
     close.Parent = title
-    
+
     close.MouseButton1Click:Connect(function() gui:Destroy() end)
-    
+
     -- Tabs
     local tabBox = Instance.new("Frame")
     tabBox.Size = UDim2.new(1, -20, 0, 40)
@@ -1150,15 +1089,15 @@ function loadMainHub()
     tabBox.BackgroundTransparency = 0.3
     tabBox.BorderSizePixel = 0
     tabBox.Parent = main
-    
+
     local tabCorner = Instance.new("UICorner")
     tabCorner.CornerRadius = UDim.new(0, 10)
     tabCorner.Parent = tabBox
-    
+
     local tabs = {"HORROR", "MOVE", "VISUAL", "TROLL", "PROTECT", "WORLD", "UTILITY"}
     local tabBtns = {}
     local current = "HORROR"
-    
+
     for i, name in ipairs(tabs) do
         local btn = Instance.new("TextButton")
         btn.Size = UDim2.new(1/7, -2, 0, 30)
@@ -1182,7 +1121,7 @@ function loadMainHub()
         
         table.insert(tabBtns, btn)
     end
-    
+
     -- Content
     local content = Instance.new("ScrollingFrame")
     content.Size = UDim2.new(1, -20, 1, -100)
@@ -1191,7 +1130,7 @@ function loadMainHub()
     content.ScrollBarThickness = 5
     content.AutomaticCanvasSize = "Y"
     content.Parent = main
-    
+
     -- Helper functions
     function createToggle(icon, text, callback)
         local f = Instance.new("Frame")
@@ -1218,7 +1157,7 @@ function loadMainHub()
             callback(state)
         end)
     end
-    
+
     function createButton(icon, text, callback)
         local btn = Instance.new("TextButton")
         btn.Size = UDim2.new(1, -10, 0, 30)
@@ -1232,7 +1171,7 @@ function loadMainHub()
         
         btn.MouseButton1Click:Connect(callback)
     end
-    
+
     -- Load tab function
     function loadTab(tab)
         for _, v in pairs(content:GetChildren()) do
@@ -1306,7 +1245,7 @@ function loadMainHub()
             createButton("📦", "Infinite Yield", loadIY)
         end
     end
-    
+
     loadTab("HORROR")
     notify("🔥 MEGA HUB READY! 52 FITUR!")
     print("🔥 UNIVERSAL HUB - MEGA EDITION LOADED")
