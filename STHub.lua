@@ -1,11 +1,10 @@
 --[[
-    UNIVERSAL HUB - FINAL FIXED EDITION
-    =====================================
-    ✅ Push & Fling WORK (BodyVelocity)
-    ✅ No Fall Damage WORK (Heartbeat)
-    ✅ Semua fitur tetap aktif setelah respawn
-    ✅ Fitur baru: Freeze All, Trap Box, Earthquake
-    ✅ UI kecil 300x400
+    UNIVERSAL HUB - WEAPONS EDITION
+    =================================
+    ✅ Tools Senjata WORK (Touched event)
+    ✅ Push/Fling pake BodyVelocity + Network Ownership
+    ✅ Trap Box dengan BodyConstraints
+    ✅ Earthquake dengan efek ke semua player
 ]]
 
 pcall(function() game.CoreGui.UniversalHub:Destroy() game.CoreGui.HubIcon:Destroy() end)
@@ -16,7 +15,7 @@ local function getChar() return player.Character end
 local function getHum() local c = getChar() return c and c:FindFirstChildOfClass("Humanoid") end
 local function getRoot() local c = getChar() return c and c:FindFirstChild("HumanoidRootPart") end
 
-local function notify(msg) pcall(function() game:GetService("StarterGui"):SetCore("SendNotification", {Title = "🚀 UNIVERSAL HUB", Text = msg, Duration = 1.5}) end) end
+local function notify(msg) pcall(function() game:GetService("StarterGui"):SetCore("SendNotification", {Title = "⚔️ WEAPONS HUB", Text = msg, Duration = 1.5}) end) end
 
 -- ========== ANTI BAN ==========
 local antiBan = false
@@ -42,67 +41,208 @@ end
 -- ========== VARIABLES ==========
 local features = {}
 local threads = {}
+local weapons = {}
 
--- ========== AUTO RE-APPLY SETELAH RESPAWN ==========
+-- ========== AUTO RE-APPLY ==========
 player.CharacterAdded:Connect(function()
     task.wait(0.5)
-    for name, enabled in pairs(features) do
-        if enabled then
-            if name == "speed" and getHum() then getHum().WalkSpeed = 50
-            elseif name == "jump" and getHum() then getHum().JumpPower = 100
-            elseif name == "infJump" and getHum() then
-                if threads.infJump then threads.infJump:Disconnect() end
-                threads.infJump = game:GetService("UserInputService").JumpRequest:Connect(function()
-                    if features.infJump and getHum() then getHum():ChangeState("Jumping") end
-                end)
-            elseif name == "dblJump" then
-                local jumped = false
-                if threads.dblJump then threads.dblJump:Disconnect() end
-                threads.dblJump = game:GetService("UserInputService").JumpRequest:Connect(function()
-                    if features.dblJump and getHum() then
-                        if getHum().FloorMaterial ~= Enum.Material.Air then jumped = false
-                        elseif not jumped then jumped = true getHum():ChangeState("Jumping") end
-                    end
-                end)
-            elseif name == "spin" then
-                threads.spin = task.spawn(function()
-                    while features.spin do
-                        local r = getRoot()
-                        if r then r.CFrame = r.CFrame * CFrame.Angles(0, math.rad(15), 0) end
-                        task.wait(0.03)
-                    end
-                end)
-            elseif name == "rainbow" then
-                threads.rainbow = task.spawn(function()
-                    local h = 0
-                    while features.rainbow do
-                        h = (h + 0.01) % 1
-                        local c = getChar()
-                        if c then
-                            for _,p in pairs(c:GetChildren()) do
-                                if p:IsA("BasePart") then p.Color = Color3.fromHSV(h,1,1) end
-                            end
-                        end
-                        task.wait(0.05)
-                    end
-                end)
-            elseif name == "headless" then
-                local c = getChar()
-                if c then
-                    local head = c:FindFirstChild("Head")
-                    if head then head.Transparency = 1 head.MeshId = "http://www.roblox.com/asset/?id=0" end
-                end
-            elseif name == "zombie" and getHum() then
-                getHum().WalkSpeed = 8
-                getHum().JumpPower = 0
-            elseif name == "god" and getHum() then
-                getHum().MaxHealth = math.huge
-                getHum().Health = math.huge
-            end
+    notify("🔄 Karakter baru!")
+end)
+
+-- ========== FUNGSI MEMBUAT TOOLS ==========
+
+local function createWeaponTool(name, weaponType)
+    -- Cek apakah tool sudah ada
+    for _, existing in pairs(weapons) do
+        if existing.Name == name then
+            return existing
         end
     end
-    notify("🔄 Fitur reactivated!")
-end)
+    
+    -- Buat tool baru
+    local tool = Instance.new("Tool")
+    tool.Name = name
+    tool.RequiresHandle = true
+    tool.CanBeDropped = false
+    tool.Parent = player.Backpack
+    
+    -- Buat handle (gagang senjata)
+    local handle = Instance.new("Part")
+    handle.Name = "Handle"
+    handle.Size = Vector3.new(1, 3, 1)
+    handle.BrickColor = weaponType.color or BrickColor.new("Bright red")
+    handle.Material = Enum.Material.Neon
+    handle.Parent = tool
+    
+    -- Sesuaikan bentuk berdasarkan tipe
+    if weaponType:find("Sword") then
+        -- Pedang panjang
+        handle.Size = Vector3.new(1, 5, 1)
+        local blade = Instance.new("Part")
+        blade.Name = "Blade"
+        blade.Size = Vector3.new(0.5, 3, 0.5)
+        blade.BrickColor = BrickColor.new("Bright yellow")
+        blade.Material = Enum.Material.Metal
+        blade.Position = handle.Position + Vector3.new(0, 2.5, 0)
+        blade.Parent = tool
+        
+        local weld = Instance.new("WeldConstraint")
+        weld.Part0 = handle
+        weld.Part1 = blade
+        weld.Parent = handle
+    elseif weaponType:find("Hammer") then
+        -- Palu besar
+        handle.Size = Vector3.new(1.5, 2, 1.5)
+        local head = Instance.new("Part")
+        head.Name = "Head"
+        head.Size = Vector3.new(2.5, 1.5, 2.5)
+        head.BrickColor = BrickColor.new("Dark stone grey")
+        head.Material = Enum.Material.Concrete
+        head.Position = handle.Position + Vector3.new(0, 1.2, 0)
+        head.Parent = tool
+        
+        local weld = Instance.new("WeldConstraint")
+        weld.Part0 = handle
+        weld.Part1 = head
+        weld.Parent = handle
+    elseif weaponType:find("Gun") then
+        -- Senjata api
+        handle.Size = Vector3.new(1, 1.5, 2.5)
+        handle.BrickColor = BrickColor.new("Black")
+        local barrel = Instance.new("Part")
+        barrel.Name = "Barrel"
+        barrel.Size = Vector3.new(0.5, 0.5, 3)
+        barrel.BrickColor = BrickColor.new("Black")
+        barrel.Material = Enum.Material.Metal
+        barrel.Position = handle.Position + Vector3.new(0, 0, 1.5)
+        barrel.Parent = tool
+        
+        local weld = Instance.new("WeldConstraint")
+        weld.Part0 = handle
+        weld.Part1 = barrel
+        weld.Parent = handle
+    end
+    
+    -- Event Activated (klik kiri) [citation:3]
+    tool.Activated:Connect(function()
+        if weaponType:find("Sword") then
+            notify("⚔️ Pedang terayun!")
+            -- Efek ayunan
+            for i = 1, 3 do
+                handle.CFrame = handle.CFrame * CFrame.Angles(0, math.rad(90), 0)
+                task.wait(0.05)
+            end
+        elseif weaponType:find("Hammer") then
+            notify("🔨 Palu diayunkan!")
+            -- Efek palu
+            handle.Size = handle.Size * 1.5
+            task.wait(0.2)
+            handle.Size = handle.Size / 1.5
+        elseif weaponType:find("Gun") then
+            notify("🔫 Menembak!")
+            -- Efek tembakan
+            local flash = Instance.new("Part")
+            flash.Name = "MuzzleFlash"
+            flash.Size = Vector3.new(0.5, 0.5, 0.5)
+            flash.BrickColor = BrickColor.new("Bright yellow")
+            flash.Material = Enum.Material.Neon
+            flash.Position = handle.Position + handle.CFrame.LookVector * 3
+            flash.Parent = workspace
+            game:GetService("Debris"):AddItem(flash, 0.1)
+            
+            -- Raycast untuk tembakan
+            local ray = Ray.new(handle.Position, handle.CFrame.LookVector * 500)
+            local hit, pos = workspace:FindPartOnRay(ray, tool.Parent)
+            if hit and hit.Parent then
+                local targetPlayer = game.Players:GetPlayerFromCharacter(hit.Parent)
+                if targetPlayer and targetPlayer ~= player then
+                    if weaponType:find("Freeze") then
+                        -- Freeze Gun
+                        if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                            targetPlayer.Character.HumanoidRootPart.Anchored = true
+                            task.wait(3)
+                            targetPlayer.Character.HumanoidRootPart.Anchored = false
+                        end
+                        notify("❄️ " .. targetPlayer.Name .. " beku!")
+                    elseif weaponType:find("Push") then
+                        -- Push Gun
+                        if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                            local bv = Instance.new("BodyVelocity")
+                            bv.MaxForce = Vector3.new(10000, 0, 10000)
+                            bv.Velocity = handle.CFrame.LookVector * 200
+                            bv.Parent = targetPlayer.Character.HumanoidRootPart
+                            game:GetService("Debris"):AddItem(bv, 0.5)
+                        end
+                        notify("👊 " .. targetPlayer.Name .. " terdorong!")
+                    elseif weaponType:find("Fling") then
+                        -- Fling Gun
+                        if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                            -- Set network ownership ke server biar bisa fling [citation:1]
+                            sethiddenproperty and sethiddenproperty(targetPlayer.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Server)
+                            
+                            local bv = Instance.new("BodyVelocity")
+                            bv.MaxForce = Vector3.new(10000, 10000, 10000)
+                            bv.Velocity = Vector3.new(math.random(-300,300), math.random(200,400), math.random(-300,300))
+                            bv.Parent = targetPlayer.Character.HumanoidRootPart
+                            game:GetService("Debris"):AddItem(bv, 0.5)
+                            
+                            -- Kembalikan ownership setelah fling
+                            task.wait(0.1)
+                            sethiddenproperty and sethiddenproperty(targetPlayer.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Automatic)
+                        end
+                        notify("🌀 " .. targetPlayer.Name .. " terlempar!")
+                    else
+                        -- Normal Gun (damage)
+                        if targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                            targetPlayer.Character:FindFirstChildOfClass("Humanoid"):TakeDamage(15)
+                        end
+                        notify("💥 " .. targetPlayer.Name .. " kena tembak!")
+                    end
+                end
+            end
+        end
+    end)
+    
+    -- Event Touched (kena ke player) [citation:3]
+    handle.Touched:Connect(function(hit)
+        if hit.Parent then
+            local targetPlayer = game.Players:GetPlayerFromCharacter(hit.Parent)
+            if targetPlayer and targetPlayer ~= player then
+                if weaponType:find("Sword") then
+                    -- Pedang damage
+                    if targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                        targetPlayer.Character:FindFirstChildOfClass("Humanoid"):TakeDamage(10)
+                        notify("⚔️ " .. targetPlayer.Name .. " terkena pedang!")
+                    end
+                elseif weaponType:find("Hammer") then
+                    -- Palu fling + damage
+                    if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        -- Set network ownership ke server
+                        sethiddenproperty and sethiddenproperty(targetPlayer.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Server)
+                        
+                        local bv = Instance.new("BodyVelocity")
+                        bv.MaxForce = Vector3.new(10000, 10000, 10000)
+                        bv.Velocity = Vector3.new(0, 200, 0) + handle.CFrame.LookVector * 150
+                        bv.Parent = targetPlayer.Character.HumanoidRootPart
+                        game:GetService("Debris"):AddItem(bv, 0.3)
+                        
+                        if targetPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                            targetPlayer.Character:FindFirstChildOfClass("Humanoid"):TakeDamage(20)
+                        end
+                        
+                        task.wait(0.1)
+                        sethiddenproperty and sethiddenproperty(targetPlayer.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Automatic)
+                        
+                        notify("🔨 " .. targetPlayer.Name .. " dipalu!")
+                    end
+                end
+            end
+        end
+    end)
+    
+    table.insert(weapons, tool)
+    return tool
+end
 
 -- ========== SPEED ==========
 function toggleSpeed(state)
@@ -168,29 +308,6 @@ function toggleInfJump(state)
     end
 end
 
--- ========== DOUBLE JUMP ==========
-function toggleDblJump(state)
-    features.dblJump = state
-    local jumped = false
-    if state then
-        if threads.dblJump then threads.dblJump:Disconnect() end
-        threads.dblJump = game:GetService("UserInputService").JumpRequest:Connect(function()
-            if features.dblJump and getHum() then
-                if getHum().FloorMaterial ~= Enum.Material.Air then
-                    jumped = false
-                elseif not jumped then
-                    jumped = true
-                    getHum():ChangeState("Jumping")
-                end
-            end
-        end)
-        notify("2️⃣ Double Jump ON")
-    else
-        if threads.dblJump then threads.dblJump:Disconnect() end
-        notify("2️⃣ Double Jump OFF")
-    end
-end
-
 -- ========== SPIN ==========
 function toggleSpin(state)
     features.spin = state
@@ -241,7 +358,7 @@ function toggleRainbow(state)
     end
 end
 
--- ========== PUSH (FIXED - BODYVELOCITY) ==========
+-- ========== PUSH (FIXED) ==========
 function togglePush(state)
     features.push = state
     if state then
@@ -253,16 +370,26 @@ function togglePush(state)
                         if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
                             local dist = (v.Character.HumanoidRootPart.Position - r.Position).Magnitude
                             if dist < 10 then
+                                -- Set network ownership ke server [citation:1]
+                                pcall(function()
+                                    sethiddenproperty(v.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Server)
+                                end)
+                                
                                 local bv = Instance.new("BodyVelocity")
-                                bv.MaxForce = Vector3.new(4000,4000,4000)
+                                bv.MaxForce = Vector3.new(10000, 0, 10000)
                                 bv.Velocity = (v.Character.HumanoidRootPart.Position - r.Position).Unit * 150
                                 bv.Parent = v.Character.HumanoidRootPart
                                 game:GetService("Debris"):AddItem(bv, 0.2)
+                                
+                                task.wait(0.1)
+                                pcall(function()
+                                    sethiddenproperty(v.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Automatic)
+                                end)
                             end
                         end
                     end
                 end
-                task.wait()
+                task.wait(0.1)
             end
         end)
         notify("👊 Push ON")
@@ -273,7 +400,7 @@ function togglePush(state)
     end
 end
 
--- ========== FLING (FIXED - BODYVELOCITY) ==========
+-- ========== FLING (FIXED) ==========
 function toggleFling(state)
     features.fling = state
     if state then
@@ -285,16 +412,26 @@ function toggleFling(state)
                         if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
                             local dist = (v.Character.HumanoidRootPart.Position - r.Position).Magnitude
                             if dist < 12 then
+                                -- Set network ownership ke server [citation:1]
+                                pcall(function()
+                                    sethiddenproperty(v.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Server)
+                                end)
+                                
                                 local bv = Instance.new("BodyVelocity")
-                                bv.MaxForce = Vector3.new(10000,10000,10000)
-                                bv.Velocity = Vector3.new(math.random(-500,500), math.random(200,500), math.random(-500,500))
+                                bv.MaxForce = Vector3.new(10000, 10000, 10000)
+                                bv.Velocity = Vector3.new(math.random(-400,400), math.random(200,400), math.random(-400,400))
                                 bv.Parent = v.Character.HumanoidRootPart
                                 game:GetService("Debris"):AddItem(bv, 0.3)
+                                
+                                task.wait(0.1)
+                                pcall(function()
+                                    sethiddenproperty(v.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Automatic)
+                                end)
                             end
                         end
                     end
                 end
-                task.wait()
+                task.wait(0.1)
             end
         end)
         notify("🌀 Fling ON")
@@ -305,7 +442,7 @@ function toggleFling(state)
     end
 end
 
--- ========== FREEZE ALL (FITUR BARU) ==========
+-- ========== FREEZE ALL ==========
 function toggleFreeze(state)
     features.freeze = state
     if state then
@@ -332,7 +469,7 @@ function toggleFreeze(state)
     end
 end
 
--- ========== TRAP BOX (FITUR BARU) ==========
+-- ========== TRAP BOX (FIXED) ==========
 function toggleTrap(state)
     features.trap = state
     if state then
@@ -343,27 +480,51 @@ function toggleTrap(state)
                     for _,v in pairs(game.Players:GetPlayers()) do
                         if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
                             local dist = (v.Character.HumanoidRootPart.Position - r.Position).Magnitude
-                            if dist < 15 and not v.Character:FindFirstChild("TrapBox") then
-                                local box = Instance.new("Part")
-                                box.Name = "TrapBox"
-                                box.Size = Vector3.new(10,10,10)
-                                box.Position = v.Character.HumanoidRootPart.Position
-                                box.Anchored = true
-                                box.CanCollide = true
-                                box.Transparency = 0.5
-                                box.BrickColor = BrickColor.new("Really red")
-                                box.Material = Enum.Material.Neon
-                                box.Parent = workspace
+                            if dist < 15 and not v.Character:FindFirstChild("Trapped") then
+                                -- Buat kotak penjara
+                                local trapParts = {}
+                                for i = 1, 6 do
+                                    local part = Instance.new("Part")
+                                    part.Name = "TrapPart"
+                                    part.Size = Vector3.new(10, 10, 10)
+                                    part.Anchored = true
+                                    part.CanCollide = true
+                                    part.Transparency = 0.6
+                                    part.BrickColor = BrickColor.new("Really red")
+                                    part.Material = Enum.Material.Neon
+                                    part.Parent = workspace
+                                    table.insert(trapParts, part)
+                                end
                                 
-                                local box2 = box:Clone()
-                                box2.Size = Vector3.new(8,8,8)
-                                box2.Transparency = 0.3
-                                box2.Parent = workspace
+                                -- Posisikan kotak mengelilingi korban
+                                local pos = v.Character.HumanoidRootPart.Position
+                                trapParts[1].Position = pos + Vector3.new(5, 0, 0)  -- Kanan
+                                trapParts[2].Position = pos + Vector3.new(-5, 0, 0) -- Kiri
+                                trapParts[3].Position = pos + Vector3.new(0, 5, 0)  -- Atas
+                                trapParts[4].Position = pos + Vector3.new(0, -5, 0) -- Bawah
+                                trapParts[5].Position = pos + Vector3.new(0, 0, 5)  -- Depan
+                                trapParts[6].Position = pos + Vector3.new(0, 0, -5) -- Belakang
                                 
-                                game:GetService("Debris"):AddItem(box, 5)
-                                game:GetService("Debris"):AddItem(box2, 5)
+                                -- Anchor korban di dalam
+                                v.Character.HumanoidRootPart.Anchored = true
                                 
-                                v.Character.HumanoidRootPart.CFrame = box.CFrame
+                                -- Buat tag "Trapped" di korban
+                                local tag = Instance.new("BoolValue")
+                                tag.Name = "Trapped"
+                                tag.Parent = v.Character
+                                
+                                -- Hapus setelah 5 detik
+                                task.delay(5, function()
+                                    for _, part in pairs(trapParts) do
+                                        part:Destroy()
+                                    end
+                                    if v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                                        v.Character.HumanoidRootPart.Anchored = false
+                                    end
+                                    if v.Character and v.Character:FindFirstChild("Trapped") then
+                                        v.Character.Trapped:Destroy()
+                                    end
+                                end)
                             end
                         end
                     end
@@ -379,37 +540,44 @@ function toggleTrap(state)
     end
 end
 
--- ========== EARTHQUAKE (FITUR BARU) ==========
+-- ========== EARTHQUAKE (FIXED) ==========
 function toggleEarthquake(state)
     features.quake = state
     if state then
         threads.quake = task.spawn(function()
             while features.quake do
-                for i = 1, 30 do
-                    local part = Instance.new("Part")
-                    part.Size = Vector3.new(5,5,5)
-                    part.Position = Vector3.new(math.random(-500,500), math.random(0,100), math.random(-500,500))
-                    part.Anchored = true
-                    part.CanCollide = false
-                    part.Transparency = 0.8
-                    part.BrickColor = BrickColor.Random()
-                    part.Parent = workspace
-                    
-                    local bv = Instance.new("BodyVelocity")
-                    bv.MaxForce = Vector3.new(0, 10000, 0)
-                    bv.Velocity = Vector3.new(0, math.random(50, 200), 0)
-                    bv.Parent = part
-                    
-                    game:GetService("Debris"):AddItem(part, 0.5)
-                end
-                
-                -- Goyangin kamera semua player (efek visual)
+                -- Goyangin semua player
                 for _,v in pairs(game.Players:GetPlayers()) do
-                    if v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                        local pos = v.Character.HumanoidRootPart.Position
-                        v.Character.HumanoidRootPart.CFrame = pos + Vector3.new(math.random(-2,2), math.random(-1,1), math.random(-2,2))
+                    if v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v ~= player then
+                        -- Set network ownership ke server
+                        pcall(function()
+                            sethiddenproperty(v.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Server)
+                        end)
+                        
+                        -- Goyang random
+                        v.Character.HumanoidRootPart.Velocity = Vector3.new(math.random(-100,100), math.random(50,150), math.random(-100,100))
+                        
+                        -- Kembalikan ownership
+                        task.wait(0.05)
+                        pcall(function()
+                            sethiddenproperty(v.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Automatic)
+                        end)
                     end
                 end
+                
+                -- Spawn part efek
+                for i = 1, 20 do
+                    local part = Instance.new("Part")
+                    part.Size = Vector3.new(3, 3, 3)
+                    part.Position = Vector3.new(math.random(-300,300), math.random(0,50), math.random(-300,300))
+                    part.Anchored = false
+                    part.CanCollide = true
+                    part.Velocity = Vector3.new(math.random(-50,50), math.random(100,200), math.random(-50,50))
+                    part.BrickColor = BrickColor.Random()
+                    part.Parent = workspace
+                    game:GetService("Debris"):AddItem(part, 1)
+                end
+                
                 task.wait(0.2)
             end
         end)
@@ -518,7 +686,7 @@ function toggleGravity(state)
     end
 end
 
--- ========== NO FALL DAMAGE (FIXED) ==========
+-- ========== NO FALL DAMAGE ==========
 function toggleNoFall(state)
     features.nofall = state
     if state then
@@ -554,6 +722,62 @@ function toggleAutoClick(state)
     end
 end
 
+-- ========== FUNGSI UNTUK WEAPONS ==========
+
+function equipSword()
+    local tool = createWeaponTool("⚔️ Magic Sword", "Sword")
+    tool.Parent = player.Backpack
+    if player.Character then
+        player.Character.Humanoid:EquipTool(tool)
+    end
+    notify("⚔️ Magic Sword siap digunakan!")
+end
+
+function equipHammer()
+    local tool = createWeaponTool("🔨 Giant Hammer", "Hammer")
+    tool.Parent = player.Backpack
+    if player.Character then
+        player.Character.Humanoid:EquipTool(tool)
+    end
+    notify("🔨 Giant Hammer siap digunakan!")
+end
+
+function equipNormalGun()
+    local tool = createWeaponTool("🔫 Pistol", "Gun")
+    tool.Parent = player.Backpack
+    if player.Character then
+        player.Character.Humanoid:EquipTool(tool)
+    end
+    notify("🔫 Pistol siap digunakan!")
+end
+
+function equipFreezeGun()
+    local tool = createWeaponTool("❄️ Freeze Gun", "Gun-Freeze")
+    tool.Parent = player.Backpack
+    if player.Character then
+        player.Character.Humanoid:EquipTool(tool)
+    end
+    notify("❄️ Freeze Gun siap digunakan!")
+end
+
+function equipPushGun()
+    local tool = createWeaponTool("👊 Push Gun", "Gun-Push")
+    tool.Parent = player.Backpack
+    if player.Character then
+        player.Character.Humanoid:EquipTool(tool)
+    end
+    notify("👊 Push Gun siap digunakan!")
+end
+
+function equipFlingGun()
+    local tool = createWeaponTool("🌀 Fling Gun", "Gun-Fling")
+    tool.Parent = player.Backpack
+    if player.Character then
+        player.Character.Humanoid:EquipTool(tool)
+    end
+    notify("🌀 Fling Gun siap digunakan!")
+end
+
 -- ========== GUI ==========
 local gui = Instance.new("ScreenGui")
 gui.Name = "UniversalHub"
@@ -561,8 +785,8 @@ gui.ResetOnSpawn = false
 gui.Parent = game.CoreGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 300, 0, 400)
-main.Position = UDim2.new(0.5, -150, 0.5, -200)
+main.Size = UDim2.new(0, 320, 0, 450)
+main.Position = UDim2.new(0.5, -160, 0.5, -225)
 main.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
 main.BackgroundTransparency = 0.1
 main.BorderSizePixel = 0
@@ -588,7 +812,7 @@ local icon = Instance.new("TextLabel")
 icon.Size = UDim2.new(0, 30, 0, 30)
 icon.Position = UDim2.new(0, 8, 0.5, -15)
 icon.BackgroundTransparency = 1
-icon.Text = "🚀"
+icon.Text = "⚔️"
 icon.TextSize = 22
 icon.TextColor3 = Color3.fromRGB(0, 200, 255)
 icon.Font = Enum.Font.SourceSans
@@ -598,7 +822,7 @@ local titleText = Instance.new("TextLabel")
 titleText.Size = UDim2.new(1, -100, 1, 0)
 titleText.Position = UDim2.new(0, 40, 0, 0)
 titleText.BackgroundTransparency = 1
-titleText.Text = "UNIVERSAL HUB"
+titleText.Text = "WEAPONS HUB"
 titleText.TextColor3 = Color3.fromRGB(255, 255, 255)
 titleText.TextSize = 14
 titleText.TextXAlignment = Enum.TextXAlignment.Left
@@ -643,7 +867,7 @@ local iconBtn = Instance.new("TextButton")
 iconBtn.Size = UDim2.new(0, 50, 0, 50)
 iconBtn.Position = UDim2.new(0.5, -25, 0.5, -25)
 iconBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-iconBtn.Text = "🚀"
+iconBtn.Text = "⚔️"
 iconBtn.TextColor3 = Color3.fromRGB(0, 200, 255)
 iconBtn.TextSize = 30
 iconBtn.Font = Enum.Font.SourceSans
@@ -672,7 +896,7 @@ local tabCorner = Instance.new("UICorner")
 tabCorner.CornerRadius = UDim.new(0, 10)
 tabCorner.Parent = tabBox
 
-local tabs = {"MAIN", "MOVE", "TROLL", "PROTECT", "WORLD"}
+local tabs = {"MAIN", "WEAPONS", "TROLL", "PROTECT", "WORLD"}
 local tabBtns = {}
 local current = "MAIN"
 
@@ -815,15 +1039,17 @@ function loadTab(tab)
         createButton("📦", "Infinite Yield", loadIY, 4)
         createToggle("🛡️", "Anti Ban", toggleAntiBan, 5)
         
-    elseif tab == "MOVE" then
-        createToggle("🔁", "Infinity Jump", toggleInfJump, 1)
-        createToggle("2️⃣", "Double Jump", toggleDblJump, 2)
-        createToggle("🌀", "Spin", toggleSpin, 3)
-        createToggle("🌈", "Rainbow", toggleRainbow, 4)
+    elseif tab == "WEAPONS" then
+        createButton("⚔️", "Equip Magic Sword", equipSword, 1)
+        createButton("🔨", "Equip Giant Hammer", equipHammer, 2)
+        createButton("🔫", "Equip Pistol", equipNormalGun, 3)
+        createButton("❄️", "Equip Freeze Gun", equipFreezeGun, 4)
+        createButton("👊", "Equip Push Gun", equipPushGun, 5)
+        createButton("🌀", "Equip Fling Gun", equipFlingGun, 6)
         
     elseif tab == "TROLL" then
-        createToggle("👊", "Push", togglePush, 1)
-        createToggle("🌀", "Fling", toggleFling, 2)
+        createToggle("👊", "Push (Area)", togglePush, 1)
+        createToggle("🌀", "Fling (Area)", toggleFling, 2)
         createToggle("❄️", "Freeze All", toggleFreeze, 3)
         createToggle("📦", "Trap Box", toggleTrap, 4)
         createToggle("🌋", "Earthquake", toggleEarthquake, 5)
@@ -840,9 +1066,12 @@ function loadTab(tab)
         createToggle("⏰", "Time Changer", toggleTime, 1)
         createToggle("🌎", "Gravity", toggleGravity, 2)
         createToggle("🖱️", "Auto Click", toggleAutoClick, 3)
+        createToggle("🔁", "Infinity Jump", toggleInfJump, 4)
+        createToggle("🌀", "Spin", toggleSpin, 5)
+        createToggle("🌈", "Rainbow", toggleRainbow, 6)
     end
 end
 
 loadTab("MAIN")
-notify("✅ FINAL FIXED EDITION READY")
-print("🚀 UNIVERSAL HUB - FINAL FIXED EDITION LOADED")
+notify("⚔️ WEAPONS EDITION READY!")
+print("⚔️ UNIVERSAL HUB - WEAPONS EDITION LOADED")
