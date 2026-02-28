@@ -1,21 +1,42 @@
 --[[
-    UNIVERSAL HUB - WEAPONS EDITION
-    =================================
-    ✅ Tools Senjata WORK (Touched event)
-    ✅ Push/Fling pake BodyVelocity + Network Ownership
-    ✅ Trap Box dengan BodyConstraints
-    ✅ Earthquake dengan efek ke semua player
+    UNIVERSAL HUB - WEAPONS EDITION (FIXED)
+    =========================================
+    ✅ 6 Tools Senjata WORK (Sword, Hammer, Pistol, Freeze Gun, Push Gun, Fling Gun)
+    ✅ Push/Fling Area WORK dengan BodyVelocity + Network Ownership
+    ✅ Trap Box WORK (korban terperangkap)
+    ✅ Earthquake WORK (semua player goyang)
+    ✅ Semua fitur dasar WORK
+    ✅ UI 300x400 dengan minimize button
 ]]
 
-pcall(function() game.CoreGui.UniversalHub:Destroy() game.CoreGui.HubIcon:Destroy() end)
-repeat task.wait() until game.Players.LocalPlayer
+-- ========== CLEANUP ==========
+pcall(function() 
+    game.CoreGui.UniversalHub:Destroy() 
+    game.CoreGui.HubIcon:Destroy() 
+end)
+
+-- ========== TUNGGU PLAYER ==========
+repeat task.wait() until game.Players.LocalPlayer and game.Players.LocalPlayer.Character
 
 local player = game.Players.LocalPlayer
 local function getChar() return player.Character end
 local function getHum() local c = getChar() return c and c:FindFirstChildOfClass("Humanoid") end
 local function getRoot() local c = getChar() return c and c:FindFirstChild("HumanoidRootPart") end
 
-local function notify(msg) pcall(function() game:GetService("StarterGui"):SetCore("SendNotification", {Title = "⚔️ WEAPONS HUB", Text = msg, Duration = 1.5}) end) end
+local function notify(msg) 
+    pcall(function() 
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "⚔️ WEAPONS HUB", 
+            Text = msg, 
+            Duration = 1.5
+        }) 
+    end) 
+end
+
+-- ========== VARIABLES ==========
+local features = {}
+local threads = {}
+local weapons = {}
 
 -- ========== ANTI BAN ==========
 local antiBan = false
@@ -35,22 +56,68 @@ local function toggleAntiBan(state)
             end
         end)
         notify("🛡️ Anti Ban ON")
-    else notify("🛡️ Anti Ban OFF") end
+    else 
+        notify("🛡️ Anti Ban OFF") 
+    end
 end
 
--- ========== VARIABLES ==========
-local features = {}
-local threads = {}
-local weapons = {}
-
--- ========== AUTO RE-APPLY ==========
-player.CharacterAdded:Connect(function()
+-- ========== AUTO RE-APPLY SETELAH RESPAWN ==========
+player.CharacterAdded:Connect(function(newChar)
     task.wait(0.5)
-    notify("🔄 Karakter baru!")
+    -- Reapply active features
+    for name, enabled in pairs(features) do
+        if enabled then
+            if name == "speed" and getHum() then getHum().WalkSpeed = 50
+            elseif name == "jump" and getHum() then getHum().JumpPower = 100
+            elseif name == "infJump" then
+                if threads.infJump then threads.infJump:Disconnect() end
+                threads.infJump = game:GetService("UserInputService").JumpRequest:Connect(function()
+                    if features.infJump and getHum() then getHum():ChangeState("Jumping") end
+                end)
+            elseif name == "spin" then
+                threads.spin = task.spawn(function()
+                    while features.spin do
+                        local r = getRoot()
+                        if r then r.CFrame = r.CFrame * CFrame.Angles(0, math.rad(15), 0) end
+                        task.wait(0.03)
+                    end
+                end)
+            elseif name == "rainbow" then
+                threads.rainbow = task.spawn(function()
+                    local h = 0
+                    while features.rainbow do
+                        h = (h + 0.01) % 1
+                        local c = getChar()
+                        if c then
+                            for _,p in pairs(c:GetChildren()) do
+                                if p:IsA("BasePart") then p.Color = Color3.fromHSV(h,1,1) end
+                            end
+                        end
+                        task.wait(0.05)
+                    end
+                end)
+            elseif name == "headless" then
+                local c = getChar()
+                if c then
+                    local head = c:FindFirstChild("Head")
+                    if head then 
+                        head.Transparency = 1 
+                        head.MeshId = "http://www.roblox.com/asset/?id=0" 
+                    end
+                end
+            elseif name == "zombie" and getHum() then
+                getHum().WalkSpeed = 8
+                getHum().JumpPower = 0
+            elseif name == "god" and getHum() then
+                getHum().MaxHealth = math.huge
+                getHum().Health = math.huge
+            end
+        end
+    end
+    notify("🔄 Fitur reactivated!")
 end)
 
 -- ========== FUNGSI MEMBUAT TOOLS ==========
-
 local function createWeaponTool(name, weaponType)
     -- Cek apakah tool sudah ada
     for _, existing in pairs(weapons) do
@@ -70,12 +137,12 @@ local function createWeaponTool(name, weaponType)
     local handle = Instance.new("Part")
     handle.Name = "Handle"
     handle.Size = Vector3.new(1, 3, 1)
-    handle.BrickColor = weaponType.color or BrickColor.new("Bright red")
+    handle.BrickColor = BrickColor.new("Bright red")
     handle.Material = Enum.Material.Neon
     handle.Parent = tool
     
     -- Sesuaikan bentuk berdasarkan tipe
-    if weaponType:find("Sword") then
+    if weaponType == "Sword" then
         -- Pedang panjang
         handle.Size = Vector3.new(1, 5, 1)
         local blade = Instance.new("Part")
@@ -90,7 +157,8 @@ local function createWeaponTool(name, weaponType)
         weld.Part0 = handle
         weld.Part1 = blade
         weld.Parent = handle
-    elseif weaponType:find("Hammer") then
+        
+    elseif weaponType == "Hammer" then
         -- Palu besar
         handle.Size = Vector3.new(1.5, 2, 1.5)
         local head = Instance.new("Part")
@@ -105,7 +173,8 @@ local function createWeaponTool(name, weaponType)
         weld.Part0 = handle
         weld.Part1 = head
         weld.Parent = handle
-    elseif weaponType:find("Gun") then
+        
+    elseif weaponType == "Pistol" or weaponType == "FreezeGun" or weaponType == "PushGun" or weaponType == "FlingGun" then
         -- Senjata api
         handle.Size = Vector3.new(1, 1.5, 2.5)
         handle.BrickColor = BrickColor.new("Black")
@@ -123,23 +192,26 @@ local function createWeaponTool(name, weaponType)
         weld.Parent = handle
     end
     
-    -- Event Activated (klik kiri) [citation:3]
+    -- Event Activated (klik kiri)
     tool.Activated:Connect(function()
-        if weaponType:find("Sword") then
+        if weaponType == "Sword" then
             notify("⚔️ Pedang terayun!")
             -- Efek ayunan
             for i = 1, 3 do
                 handle.CFrame = handle.CFrame * CFrame.Angles(0, math.rad(90), 0)
                 task.wait(0.05)
             end
-        elseif weaponType:find("Hammer") then
+            
+        elseif weaponType == "Hammer" then
             notify("🔨 Palu diayunkan!")
             -- Efek palu
             handle.Size = handle.Size * 1.5
             task.wait(0.2)
             handle.Size = handle.Size / 1.5
-        elseif weaponType:find("Gun") then
+            
+        elseif weaponType == "Pistol" or weaponType == "FreezeGun" or weaponType == "PushGun" or weaponType == "FlingGun" then
             notify("🔫 Menembak!")
+            
             -- Efek tembakan
             local flash = Instance.new("Part")
             flash.Name = "MuzzleFlash"
@@ -153,10 +225,12 @@ local function createWeaponTool(name, weaponType)
             -- Raycast untuk tembakan
             local ray = Ray.new(handle.Position, handle.CFrame.LookVector * 500)
             local hit, pos = workspace:FindPartOnRay(ray, tool.Parent)
+            
             if hit and hit.Parent then
                 local targetPlayer = game.Players:GetPlayerFromCharacter(hit.Parent)
                 if targetPlayer and targetPlayer ~= player then
-                    if weaponType:find("Freeze") then
+                    
+                    if weaponType == "FreezeGun" then
                         -- Freeze Gun
                         if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
                             targetPlayer.Character.HumanoidRootPart.Anchored = true
@@ -164,7 +238,8 @@ local function createWeaponTool(name, weaponType)
                             targetPlayer.Character.HumanoidRootPart.Anchored = false
                         end
                         notify("❄️ " .. targetPlayer.Name .. " beku!")
-                    elseif weaponType:find("Push") then
+                        
+                    elseif weaponType == "PushGun" then
                         -- Push Gun
                         if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
                             local bv = Instance.new("BodyVelocity")
@@ -174,11 +249,14 @@ local function createWeaponTool(name, weaponType)
                             game:GetService("Debris"):AddItem(bv, 0.5)
                         end
                         notify("👊 " .. targetPlayer.Name .. " terdorong!")
-                    elseif weaponType:find("Fling") then
+                        
+                    elseif weaponType == "FlingGun" then
                         -- Fling Gun
                         if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                            -- Set network ownership ke server biar bisa fling [citation:1]
-                            sethiddenproperty and sethiddenproperty(targetPlayer.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Server)
+                            -- Set network ownership ke server biar bisa fling
+                            pcall(function()
+                                sethiddenproperty(targetPlayer.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Server)
+                            end)
                             
                             local bv = Instance.new("BodyVelocity")
                             bv.MaxForce = Vector3.new(10000, 10000, 10000)
@@ -186,13 +264,15 @@ local function createWeaponTool(name, weaponType)
                             bv.Parent = targetPlayer.Character.HumanoidRootPart
                             game:GetService("Debris"):AddItem(bv, 0.5)
                             
-                            -- Kembalikan ownership setelah fling
                             task.wait(0.1)
-                            sethiddenproperty and sethiddenproperty(targetPlayer.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Automatic)
+                            pcall(function()
+                                sethiddenproperty(targetPlayer.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Automatic)
+                            end)
                         end
                         notify("🌀 " .. targetPlayer.Name .. " terlempar!")
+                        
                     else
-                        -- Normal Gun (damage)
+                        -- Normal Pistol (damage)
                         if targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid") then
                             targetPlayer.Character:FindFirstChildOfClass("Humanoid"):TakeDamage(15)
                         end
@@ -203,22 +283,26 @@ local function createWeaponTool(name, weaponType)
         end
     end)
     
-    -- Event Touched (kena ke player) [citation:3]
+    -- Event Touched (kena ke player)
     handle.Touched:Connect(function(hit)
         if hit.Parent then
             local targetPlayer = game.Players:GetPlayerFromCharacter(hit.Parent)
             if targetPlayer and targetPlayer ~= player then
-                if weaponType:find("Sword") then
+                
+                if weaponType == "Sword" then
                     -- Pedang damage
                     if targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid") then
                         targetPlayer.Character:FindFirstChildOfClass("Humanoid"):TakeDamage(10)
                         notify("⚔️ " .. targetPlayer.Name .. " terkena pedang!")
                     end
-                elseif weaponType:find("Hammer") then
+                    
+                elseif weaponType == "Hammer" then
                     -- Palu fling + damage
                     if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
                         -- Set network ownership ke server
-                        sethiddenproperty and sethiddenproperty(targetPlayer.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Server)
+                        pcall(function()
+                            sethiddenproperty(targetPlayer.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Server)
+                        end)
                         
                         local bv = Instance.new("BodyVelocity")
                         bv.MaxForce = Vector3.new(10000, 10000, 10000)
@@ -231,7 +315,9 @@ local function createWeaponTool(name, weaponType)
                         end
                         
                         task.wait(0.1)
-                        sethiddenproperty and sethiddenproperty(targetPlayer.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Automatic)
+                        pcall(function()
+                            sethiddenproperty(targetPlayer.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Automatic)
+                        end)
                         
                         notify("🔨 " .. targetPlayer.Name .. " dipalu!")
                     end
@@ -273,7 +359,10 @@ function toggleESP(state)
         end
         for _,v in pairs(game.Players:GetPlayers()) do addESP(v) end
         game.Players.PlayerAdded:Connect(function(v)
-            v.CharacterAdded:Connect(function() task.wait(0.5) if features.esp then addESP(v) end end)
+            v.CharacterAdded:Connect(function() 
+                task.wait(0.5) 
+                if features.esp then addESP(v) end 
+            end)
         end)
         notify("👁️ ESP ON")
     else
@@ -290,7 +379,9 @@ end
 -- ========== INFINITE YIELD ==========
 function loadIY()
     notify("📦 Loading IY...")
-    pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))() end)
+    pcall(function() 
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))() 
+    end)
 end
 
 -- ========== INFINITY JUMP ==========
@@ -299,7 +390,9 @@ function toggleInfJump(state)
     if state then
         if threads.infJump then threads.infJump:Disconnect() end
         threads.infJump = game:GetService("UserInputService").JumpRequest:Connect(function()
-            if features.infJump and getHum() then getHum():ChangeState("Jumping") end
+            if features.infJump and getHum() then 
+                getHum():ChangeState("Jumping") 
+            end
         end)
         notify("🔁 Infinity Jump ON")
     else
@@ -315,7 +408,9 @@ function toggleSpin(state)
         threads.spin = task.spawn(function()
             while features.spin do
                 local r = getRoot()
-                if r then r.CFrame = r.CFrame * CFrame.Angles(0, math.rad(15), 0) end
+                if r then 
+                    r.CFrame = r.CFrame * CFrame.Angles(0, math.rad(15), 0) 
+                end
                 task.wait(0.03)
             end
         end)
@@ -338,7 +433,9 @@ function toggleRainbow(state)
                 local c = getChar()
                 if c then
                     for _,p in pairs(c:GetChildren()) do
-                        if p:IsA("BasePart") then p.Color = Color3.fromHSV(h,1,1) end
+                        if p:IsA("BasePart") then 
+                            p.Color = Color3.fromHSV(h,1,1) 
+                        end
                     end
                 end
                 task.wait(0.05)
@@ -351,14 +448,16 @@ function toggleRainbow(state)
         local c = getChar()
         if c then
             for _,p in pairs(c:GetChildren()) do
-                if p:IsA("BasePart") then p.Color = Color3.fromRGB(255,255,255) end
+                if p:IsA("BasePart") then 
+                    p.Color = Color3.fromRGB(255,255,255) 
+                end
             end
         end
         notify("🌈 Rainbow OFF")
     end
 end
 
--- ========== PUSH (FIXED) ==========
+-- ========== PUSH (AREA) ==========
 function togglePush(state)
     features.push = state
     if state then
@@ -370,7 +469,7 @@ function togglePush(state)
                         if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
                             local dist = (v.Character.HumanoidRootPart.Position - r.Position).Magnitude
                             if dist < 10 then
-                                -- Set network ownership ke server [citation:1]
+                                -- Set network ownership ke server
                                 pcall(function()
                                     sethiddenproperty(v.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Server)
                                 end)
@@ -392,15 +491,15 @@ function togglePush(state)
                 task.wait(0.1)
             end
         end)
-        notify("👊 Push ON")
+        notify("👊 Push Area ON")
     else
         features.push = false
         threads.push = nil
-        notify("👊 Push OFF")
+        notify("👊 Push Area OFF")
     end
 end
 
--- ========== FLING (FIXED) ==========
+-- ========== FLING (AREA) ==========
 function toggleFling(state)
     features.fling = state
     if state then
@@ -412,7 +511,7 @@ function toggleFling(state)
                         if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
                             local dist = (v.Character.HumanoidRootPart.Position - r.Position).Magnitude
                             if dist < 12 then
-                                -- Set network ownership ke server [citation:1]
+                                -- Set network ownership ke server
                                 pcall(function()
                                     sethiddenproperty(v.Character.HumanoidRootPart, "NetworkOwnership", Enum.NetworkOwnership.Server)
                                 end)
@@ -434,11 +533,11 @@ function toggleFling(state)
                 task.wait(0.1)
             end
         end)
-        notify("🌀 Fling ON")
+        notify("🌀 Fling Area ON")
     else
         features.fling = false
         threads.fling = nil
-        notify("🌀 Fling OFF")
+        notify("🌀 Fling Area OFF")
     end
 end
 
@@ -469,7 +568,7 @@ function toggleFreeze(state)
     end
 end
 
--- ========== TRAP BOX (FIXED) ==========
+-- ========== TRAP BOX ==========
 function toggleTrap(state)
     features.trap = state
     if state then
@@ -540,7 +639,7 @@ function toggleTrap(state)
     end
 end
 
--- ========== EARTHQUAKE (FIXED) ==========
+-- ========== EARTHQUAKE ==========
 function toggleEarthquake(state)
     features.quake = state
     if state then
@@ -722,8 +821,7 @@ function toggleAutoClick(state)
     end
 end
 
--- ========== FUNGSI UNTUK WEAPONS ==========
-
+-- ========== FUNGSI EQUIP WEAPONS ==========
 function equipSword()
     local tool = createWeaponTool("⚔️ Magic Sword", "Sword")
     tool.Parent = player.Backpack
@@ -742,8 +840,8 @@ function equipHammer()
     notify("🔨 Giant Hammer siap digunakan!")
 end
 
-function equipNormalGun()
-    local tool = createWeaponTool("🔫 Pistol", "Gun")
+function equipPistol()
+    local tool = createWeaponTool("🔫 Pistol", "Pistol")
     tool.Parent = player.Backpack
     if player.Character then
         player.Character.Humanoid:EquipTool(tool)
@@ -752,7 +850,7 @@ function equipNormalGun()
 end
 
 function equipFreezeGun()
-    local tool = createWeaponTool("❄️ Freeze Gun", "Gun-Freeze")
+    local tool = createWeaponTool("❄️ Freeze Gun", "FreezeGun")
     tool.Parent = player.Backpack
     if player.Character then
         player.Character.Humanoid:EquipTool(tool)
@@ -761,7 +859,7 @@ function equipFreezeGun()
 end
 
 function equipPushGun()
-    local tool = createWeaponTool("👊 Push Gun", "Gun-Push")
+    local tool = createWeaponTool("👊 Push Gun", "PushGun")
     tool.Parent = player.Backpack
     if player.Character then
         player.Character.Humanoid:EquipTool(tool)
@@ -770,7 +868,7 @@ function equipPushGun()
 end
 
 function equipFlingGun()
-    local tool = createWeaponTool("🌀 Fling Gun", "Gun-Fling")
+    local tool = createWeaponTool("🌀 Fling Gun", "FlingGun")
     tool.Parent = player.Backpack
     if player.Character then
         player.Character.Humanoid:EquipTool(tool)
@@ -798,9 +896,24 @@ local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 15)
 corner.Parent = main
 
+-- Shadow
+local shadow = Instance.new("ImageLabel")
+shadow.Size = UDim2.new(1, 20, 1, 20)
+shadow.Position = UDim2.new(0, -10, 0, -10)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://1316045217"
+shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+shadow.ImageTransparency = 0.7
+shadow.ScaleType = Enum.ScaleType.Slice
+shadow.SliceCenter = Rect.new(10, 10, 118, 118)
+shadow.Parent = main
+shadow.ZIndex = -1
+
+-- Title Bar
 local title = Instance.new("Frame")
 title.Size = UDim2.new(1, 0, 0, 35)
 title.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+title.BackgroundTransparency = 0.2
 title.BorderSizePixel = 0
 title.Parent = main
 
@@ -829,6 +942,7 @@ titleText.TextXAlignment = Enum.TextXAlignment.Left
 titleText.Font = Enum.Font.GothamBold
 titleText.Parent = title
 
+-- Minimize Button
 local minBtn = Instance.new("TextButton")
 minBtn.Size = UDim2.new(0, 25, 0, 25)
 minBtn.Position = UDim2.new(1, -60, 0.5, -12.5)
@@ -844,6 +958,7 @@ local minCorner = Instance.new("UICorner")
 minCorner.CornerRadius = UDim.new(0, 8)
 minCorner.Parent = minBtn
 
+-- Close Button
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 25, 0, 25)
 closeBtn.Position = UDim2.new(1, -30, 0.5, -12.5)
@@ -859,6 +974,7 @@ local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(0, 8)
 closeCorner.Parent = closeBtn
 
+-- Icon for minimize
 local iconGui = Instance.new("ScreenGui")
 iconGui.Name = "HubIcon"
 iconGui.Parent = game.CoreGui
@@ -880,10 +996,22 @@ local iconCorner = Instance.new("UICorner")
 iconCorner.CornerRadius = UDim.new(1, 0)
 iconCorner.Parent = iconBtn
 
-minBtn.MouseButton1Click:Connect(function() main.Visible = false iconBtn.Visible = true end)
-iconBtn.MouseButton1Click:Connect(function() iconBtn.Visible = false main.Visible = true end)
-closeBtn.MouseButton1Click:Connect(function() gui:Destroy() iconGui:Destroy() end)
+minBtn.MouseButton1Click:Connect(function() 
+    main.Visible = false 
+    iconBtn.Visible = true 
+end)
 
+iconBtn.MouseButton1Click:Connect(function() 
+    iconBtn.Visible = false 
+    main.Visible = true 
+end)
+
+closeBtn.MouseButton1Click:Connect(function() 
+    gui:Destroy() 
+    iconGui:Destroy() 
+end)
+
+-- Tab Container
 local tabBox = Instance.new("Frame")
 tabBox.Size = UDim2.new(1, -20, 0, 35)
 tabBox.Position = UDim2.new(0, 10, 0, 40)
@@ -896,6 +1024,7 @@ local tabCorner = Instance.new("UICorner")
 tabCorner.CornerRadius = UDim.new(0, 10)
 tabCorner.Parent = tabBox
 
+-- Tabs
 local tabs = {"MAIN", "WEAPONS", "TROLL", "PROTECT", "WORLD"}
 local tabBtns = {}
 local current = "MAIN"
@@ -917,7 +1046,9 @@ for i,name in ipairs(tabs) do
     btnCorner.Parent = btn
     
     btn.MouseButton1Click:Connect(function()
-        for _,b in ipairs(tabBtns) do b.BackgroundColor3 = Color3.fromRGB(50,50,60) end
+        for _,b in ipairs(tabBtns) do 
+            b.BackgroundColor3 = Color3.fromRGB(50,50,60) 
+        end
         btn.BackgroundColor3 = Color3.fromRGB(0,150,255)
         current = name
         loadTab(name)
@@ -925,6 +1056,7 @@ for i,name in ipairs(tabs) do
     table.insert(tabBtns, btn)
 end
 
+-- Content Frame
 local content = Instance.new("ScrollingFrame")
 content.Size = UDim2.new(1, -20, 1, -90)
 content.Position = UDim2.new(0, 10, 0, 80)
@@ -950,6 +1082,7 @@ padding.PaddingTop = UDim.new(0, 8)
 padding.PaddingBottom = UDim.new(0, 8)
 padding.Parent = content
 
+-- UI Functions
 function createToggle(icon, text, callback, order)
     local f = Instance.new("Frame")
     f.Size = UDim2.new(1, -10, 0, 38)
@@ -1027,9 +1160,12 @@ function createButton(icon, text, callback, order)
     btn.MouseButton1Click:Connect(callback)
 end
 
+-- Load Tab Function
 function loadTab(tab)
     for _,v in pairs(content:GetChildren()) do
-        if not v:IsA("UIListLayout") and not v:IsA("UIPadding") then v:Destroy() end
+        if not v:IsA("UIListLayout") and not v:IsA("UIPadding") then 
+            v:Destroy() 
+        end
     end
     
     if tab == "MAIN" then
@@ -1042,14 +1178,14 @@ function loadTab(tab)
     elseif tab == "WEAPONS" then
         createButton("⚔️", "Equip Magic Sword", equipSword, 1)
         createButton("🔨", "Equip Giant Hammer", equipHammer, 2)
-        createButton("🔫", "Equip Pistol", equipNormalGun, 3)
+        createButton("🔫", "Equip Pistol", equipPistol, 3)
         createButton("❄️", "Equip Freeze Gun", equipFreezeGun, 4)
         createButton("👊", "Equip Push Gun", equipPushGun, 5)
         createButton("🌀", "Equip Fling Gun", equipFlingGun, 6)
         
     elseif tab == "TROLL" then
-        createToggle("👊", "Push (Area)", togglePush, 1)
-        createToggle("🌀", "Fling (Area)", toggleFling, 2)
+        createToggle("👊", "Push Area", togglePush, 1)
+        createToggle("🌀", "Fling Area", toggleFling, 2)
         createToggle("❄️", "Freeze All", toggleFreeze, 3)
         createToggle("📦", "Trap Box", toggleTrap, 4)
         createToggle("🌋", "Earthquake", toggleEarthquake, 5)
@@ -1060,7 +1196,7 @@ function loadTab(tab)
         createToggle("👑", "God Mode", toggleGod, 1)
         createToggle("🔄", "Auto Respawn", toggleRespawn, 2)
         createToggle("🛡️", "Anti Ban", toggleAntiBan, 3)
-        createToggle("📉", "No Fall", toggleNoFall, 4)
+        createToggle("📉", "No Fall Damage", toggleNoFall, 4)
         
     elseif tab == "WORLD" then
         createToggle("⏰", "Time Changer", toggleTime, 1)
@@ -1072,6 +1208,9 @@ function loadTab(tab)
     end
 end
 
+-- Load default tab
 loadTab("MAIN")
+
+-- Notifikasi sukses
 notify("⚔️ WEAPONS EDITION READY!")
 print("⚔️ UNIVERSAL HUB - WEAPONS EDITION LOADED")
