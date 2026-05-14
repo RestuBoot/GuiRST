@@ -521,12 +521,32 @@ local function CreateToggle(parent,text,callback)
 	end)
 end
 
+local function CreateButton(parent,text,callback)
+
+	local Button = Instance.new("TextButton")
+	Button.Parent = parent
+	Button.Size = UDim2.new(1,-10,0,50)
+	Button.BackgroundColor3 = Color3.fromRGB(30,30,30)
+	Button.Text = text
+	Button.Font = Enum.Font.GothamBold
+	Button.TextColor3 = Color3.new(1,1,1)
+	Button.TextSize = 15
+	Button.BorderSizePixel = 0
+
+	Instance.new("UICorner",Button).CornerRadius = UDim.new(0,12)
+
+	Button.MouseButton1Click:Connect(function()
+		pcall(callback)
+	end)
+end
+
 -- TABS
 
 local MainTab = CreateTab("Main")
 local PlayerTab = CreateTab("Player")
 local VisualTab = CreateTab("Visual")
 local MiscTab = CreateTab("Misc")
+local ScriptTab = CreateTab("Scripts")
 
 -- FEATURES
 
@@ -752,4 +772,32 @@ UIS.InputChanged:Connect(function(input)
 	if input == dragInput2 and dragging2 then
 		update2(input)
 	end
+end)
+
+--========================================================--
+--                    SCRIPT TAB                          --
+--========================================================--
+
+CreateButton(ScriptTab,"Cyraa Hub Brainrot",function()
+
+	loadstring(game:HttpGet("https://rawscripts.net/raw/Infinity-Be-Flash-For-Brainrots!-Auto-farm-keyless-Cyraa-Hub-215449"))()
+
+end)
+
+CreateButton(ScriptTab,"Infinite Yield",function()
+
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+
+end)
+
+CreateButton(ScriptTab,"Dex Explorer",function()
+
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+
+end)
+
+CreateButton(ScriptTab,"SimpleSpy",function()
+
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/exxtremestuffs/SimpleSpySource/master/SimpleSpy.lua"))()
+
 end)
