@@ -1,33 +1,174 @@
---// NEBULA X HUB
---// Mobile & PC Supported
---// Modern Roblox Executor UI
---// Features:
---// Infinite Jump
---// WalkSpeed
---// Fly
---// Noclip
---// FullBright
---// Rejoin
---// Anti AFK
---// Draggable UI
---// Hide/Show UI
+--========================================================--
+--                    THUB OFFICIAL                       --
+--              ULTRA PREMIUM EXECUTOR HUB                --
+--========================================================--
+
+--// SERVICES
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
+local TeleportService = game:GetService("TeleportService")
+local VirtualUser = game:GetService("VirtualUser")
+
+local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
+
+--// REMOVE OLD UI
+
+pcall(function()
+	game.CoreGui:FindFirstChild("THUB_OFFICIAL"):Destroy()
+	game.CoreGui:FindFirstChild("THUB_KEYSYSTEM"):Destroy()
+end)
+
+--========================================================--
+--                     KEY SYSTEM                         --
+--========================================================--
+
+local CorrectKey = "THUB2026"
+local KeyPassed = false
+
+local KeyGui = Instance.new("ScreenGui")
+KeyGui.Name = "THUB_KEYSYSTEM"
+KeyGui.Parent = game.CoreGui
+KeyGui.ResetOnSpawn = false
+
+local Blur = Instance.new("BlurEffect")
+Blur.Parent = Lighting
+Blur.Size = 15
+
+local KeyMain = Instance.new("Frame")
+KeyMain.Parent = KeyGui
+KeyMain.Size = UDim2.new(0,430,0,260)
+KeyMain.Position = UDim2.new(0.5,-215,0.5,-130)
+KeyMain.BackgroundColor3 = Color3.fromRGB(15,15,15)
+KeyMain.BorderSizePixel = 0
+KeyMain.Active = true
+
+Instance.new("UICorner",KeyMain).CornerRadius = UDim.new(0,20)
+
+local Stroke = Instance.new("UIStroke")
+Stroke.Parent = KeyMain
+Stroke.Color = Color3.fromRGB(60,60,60)
+
+local Topbar = Instance.new("Frame")
+Topbar.Parent = KeyMain
+Topbar.Size = UDim2.new(1,0,0,45)
+Topbar.BackgroundColor3 = Color3.fromRGB(20,20,20)
+Topbar.BorderSizePixel = 0
+
+Instance.new("UICorner",Topbar).CornerRadius = UDim.new(0,20)
+
+local Fix = Instance.new("Frame")
+Fix.Parent = Topbar
+Fix.Size = UDim2.new(1,0,0,20)
+Fix.Position = UDim2.new(0,0,1,-20)
+Fix.BackgroundColor3 = Color3.fromRGB(20,20,20)
+Fix.BorderSizePixel = 0
+
+local Title = Instance.new("TextLabel")
+Title.Parent = Topbar
+Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(1,0,1,0)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "THUB OFFICIAL"
+Title.TextColor3 = Color3.new(1,1,1)
+Title.TextSize = 24
+
+local Subtitle = Instance.new("TextLabel")
+Subtitle.Parent = KeyMain
+Subtitle.BackgroundTransparency = 1
+Subtitle.Position = UDim2.new(0,0,0,60)
+Subtitle.Size = UDim2.new(1,0,0,30)
+Subtitle.Font = Enum.Font.Gotham
+Subtitle.Text = "Premium Access Key System"
+Subtitle.TextColor3 = Color3.fromRGB(180,180,180)
+Subtitle.TextSize = 15
+
+local KeyBox = Instance.new("TextBox")
+KeyBox.Parent = KeyMain
+KeyBox.Size = UDim2.new(0,340,0,45)
+KeyBox.Position = UDim2.new(0.5,-170,0,110)
+KeyBox.BackgroundColor3 = Color3.fromRGB(22,22,22)
+KeyBox.PlaceholderText = "Enter Key..."
+KeyBox.Text = ""
+KeyBox.Font = Enum.Font.GothamSemibold
+KeyBox.TextColor3 = Color3.new(1,1,1)
+KeyBox.TextSize = 16
+KeyBox.BorderSizePixel = 0
+
+Instance.new("UICorner",KeyBox).CornerRadius = UDim.new(0,12)
+
+local Check = Instance.new("TextButton")
+Check.Parent = KeyMain
+Check.Size = UDim2.new(0,340,0,45)
+Check.Position = UDim2.new(0.5,-170,0,170)
+Check.BackgroundColor3 = Color3.fromRGB(0,170,127)
+Check.Text = "UNLOCK"
+Check.Font = Enum.Font.GothamBold
+Check.TextColor3 = Color3.new(1,1,1)
+Check.TextSize = 17
+Check.BorderSizePixel = 0
+
+Instance.new("UICorner",Check).CornerRadius = UDim.new(0,12)
+
+local Status = Instance.new("TextLabel")
+Status.Parent = KeyMain
+Status.BackgroundTransparency = 1
+Status.Position = UDim2.new(0,0,1,-25)
+Status.Size = UDim2.new(1,0,0,20)
+Status.Font = Enum.Font.Gotham
+Status.Text = ""
+Status.TextColor3 = Color3.fromRGB(255,80,80)
+Status.TextSize = 14
+
+Check.MouseButton1Click:Connect(function()
+
+	if KeyBox.Text == CorrectKey then
+
+		KeyPassed = true
+
+		Status.TextColor3 = Color3.fromRGB(0,255,127)
+		Status.Text = "Access Granted"
+
+		wait(1)
+
+		KeyGui:Destroy()
+		Blur:Destroy()
+
+	else
+
+		Status.TextColor3 = Color3.fromRGB(255,80,80)
+		Status.Text = "Invalid Key"
+
+	end
+end)
+
+repeat task.wait() until KeyPassed
+
+--========================================================--
+--                     MAIN HUB                           --
+--========================================================--
 
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Lighting = game:GetService("Lighting")
 local TeleportService = game:GetService("TeleportService")
+local TweenService = game:GetService("TweenService")
 
 local Player = Players.LocalPlayer
 
 pcall(function()
-	game.CoreGui:FindFirstChild("NebulaXHub"):Destroy()
+	game.CoreGui:FindFirstChild("THubOfficial"):Destroy()
 end)
 
 -- GUI
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "NebulaXHub"
+ScreenGui.Name = "THubOfficial"
 ScreenGui.Parent = game.CoreGui
 ScreenGui.ResetOnSpawn = false
 
@@ -35,13 +176,13 @@ ScreenGui.ResetOnSpawn = false
 
 local Main = Instance.new("Frame")
 Main.Parent = ScreenGui
-Main.Size = UDim2.new(0,340,0,420)
-Main.Position = UDim2.new(0.5,-170,0.5,-210)
-Main.BackgroundColor3 = Color3.fromRGB(18,18,18)
+Main.Size = UDim2.new(0,600,0,360)
+Main.Position = UDim2.new(0.5,-300,0.5,-180)
+Main.BackgroundColor3 = Color3.fromRGB(15,15,15)
 Main.BorderSizePixel = 0
 Main.Active = true
 
-Instance.new("UICorner",Main).CornerRadius = UDim.new(0,18)
+Instance.new("UICorner",Main).CornerRadius = UDim.new(0,20)
 
 local Stroke = Instance.new("UIStroke",Main)
 Stroke.Color = Color3.fromRGB(60,60,60)
@@ -51,34 +192,36 @@ Stroke.Color = Color3.fromRGB(60,60,60)
 local Topbar = Instance.new("Frame")
 Topbar.Parent = Main
 Topbar.Size = UDim2.new(1,0,0,45)
-Topbar.BackgroundColor3 = Color3.fromRGB(24,24,24)
+Topbar.BackgroundColor3 = Color3.fromRGB(22,22,22)
 Topbar.BorderSizePixel = 0
 
-Instance.new("UICorner",Topbar).CornerRadius = UDim.new(0,18)
+Instance.new("UICorner",Topbar).CornerRadius = UDim.new(0,20)
 
 local Fix = Instance.new("Frame")
 Fix.Parent = Topbar
-Fix.Size = UDim2.new(1,0,0,18)
-Fix.Position = UDim2.new(0,0,1,-18)
-Fix.BackgroundColor3 = Color3.fromRGB(24,24,24)
+Fix.Size = UDim2.new(1,0,0,20)
+Fix.Position = UDim2.new(0,0,1,-20)
+Fix.BackgroundColor3 = Color3.fromRGB(22,22,22)
 Fix.BorderSizePixel = 0
 
 local Title = Instance.new("TextLabel")
 Title.Parent = Topbar
 Title.BackgroundTransparency = 1
-Title.Size = UDim2.new(1,0,1,0)
+Title.Position = UDim2.new(0,15,0,0)
+Title.Size = UDim2.new(0,250,1,0)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "NEBULA X HUB"
-Title.TextColor3 = Color3.fromRGB(255,255,255)
-Title.TextSize = 20
+Title.Text = "THUB OFFICIAL"
+Title.TextColor3 = Color3.new(1,1,1)
+Title.TextSize = 22
+Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- MINIMIZE BUTTON
+-- MINIMIZE
 
 local Minimize = Instance.new("TextButton")
 Minimize.Parent = Topbar
-Minimize.Size = UDim2.new(0,28,0,28)
-Minimize.Position = UDim2.new(1,-38,0.5,-14)
-Minimize.BackgroundColor3 = Color3.fromRGB(40,40,40)
+Minimize.Size = UDim2.new(0,30,0,30)
+Minimize.Position = UDim2.new(1,-40,0.5,-15)
+Minimize.BackgroundColor3 = Color3.fromRGB(35,35,35)
 Minimize.Text = "-"
 Minimize.Font = Enum.Font.GothamBold
 Minimize.TextColor3 = Color3.new(1,1,1)
@@ -93,8 +236,8 @@ local OpenButton = Instance.new("TextButton")
 OpenButton.Parent = ScreenGui
 OpenButton.Size = UDim2.new(0,55,0,55)
 OpenButton.Position = UDim2.new(0,20,0.5,0)
-OpenButton.BackgroundColor3 = Color3.fromRGB(18,18,18)
-OpenButton.Text = "☰"
+OpenButton.BackgroundColor3 = Color3.fromRGB(15,15,15)
+OpenButton.Text = "T"
 OpenButton.TextColor3 = Color3.new(1,1,1)
 OpenButton.Font = Enum.Font.GothamBold
 OpenButton.TextSize = 24
@@ -103,51 +246,111 @@ OpenButton.BorderSizePixel = 0
 
 Instance.new("UICorner",OpenButton).CornerRadius = UDim.new(1,0)
 
--- SCROLLING FRAME
+-- SIDEBAR
 
-local Scroll = Instance.new("ScrollingFrame")
-Scroll.Parent = Main
-Scroll.Position = UDim2.new(0,0,0,50)
-Scroll.Size = UDim2.new(1,0,1,-50)
-Scroll.CanvasSize = UDim2.new(0,0,0,700)
-Scroll.ScrollBarThickness = 3
-Scroll.BackgroundTransparency = 1
-Scroll.BorderSizePixel = 0
+local Sidebar = Instance.new("Frame")
+Sidebar.Parent = Main
+Sidebar.Position = UDim2.new(0,0,0,45)
+Sidebar.Size = UDim2.new(0,150,1,-45)
+Sidebar.BackgroundColor3 = Color3.fromRGB(20,20,20)
+Sidebar.BorderSizePixel = 0
 
-local Layout = Instance.new("UIListLayout")
-Layout.Parent = Scroll
-Layout.Padding = UDim.new(0,10)
+local TabsLayout = Instance.new("UIListLayout")
+TabsLayout.Parent = Sidebar
+TabsLayout.Padding = UDim.new(0,8)
 
-local Padding = Instance.new("UIPadding")
-Padding.Parent = Scroll
-Padding.PaddingTop = UDim.new(0,12)
-Padding.PaddingLeft = UDim.new(0,12)
+local TabsPadding = Instance.new("UIPadding")
+TabsPadding.Parent = Sidebar
+TabsPadding.PaddingTop = UDim.new(0,15)
+TabsPadding.PaddingLeft = UDim.new(0,10)
 
--- FUNCTION CREATE TOGGLE
+-- CONTENT HOLDER
 
-local function CreateToggle(text,callback)
+local ContentHolder = Instance.new("Frame")
+ContentHolder.Parent = Main
+ContentHolder.Position = UDim2.new(0,160,0,55)
+ContentHolder.Size = UDim2.new(1,-170,1,-65)
+ContentHolder.BackgroundTransparency = 1
 
-	local Frame = Instance.new("Frame")
-	Frame.Parent = Scroll
-	Frame.Size = UDim2.new(1,-24,0,50)
-	Frame.BackgroundColor3 = Color3.fromRGB(26,26,26)
+-- TAB SYSTEM
+
+local Tabs = {}
+local CurrentTab
+
+local function CreateTab(name)
+
+	local Button = Instance.new("TextButton")
+	Button.Parent = Sidebar
+	Button.Size = UDim2.new(1,-20,0,40)
+	Button.BackgroundColor3 = Color3.fromRGB(30,30,30)
+	Button.Text = name
+	Button.Font = Enum.Font.GothamBold
+	Button.TextColor3 = Color3.new(1,1,1)
+	Button.TextSize = 15
+	Button.BorderSizePixel = 0
+
+	Instance.new("UICorner",Button).CornerRadius = UDim.new(0,12)
+
+	local Frame = Instance.new("ScrollingFrame")
+	Frame.Parent = ContentHolder
+	Frame.Size = UDim2.new(1,0,1,0)
+	Frame.Visible = false
+	Frame.BackgroundTransparency = 1
+	Frame.ScrollBarThickness = 3
+	Frame.CanvasSize = UDim2.new(0,0,0,600)
 	Frame.BorderSizePixel = 0
 
-	Instance.new("UICorner",Frame).CornerRadius = UDim.new(0,12)
+	local Layout = Instance.new("UIListLayout")
+	Layout.Parent = Frame
+	Layout.Padding = UDim.new(0,10)
+
+	local Padding = Instance.new("UIPadding")
+	Padding.Parent = Frame
+	Padding.PaddingTop = UDim.new(0,5)
+
+	Button.MouseButton1Click:Connect(function()
+
+		for _,tab in pairs(Tabs) do
+			tab.Visible = false
+		end
+
+		Frame.Visible = true
+		CurrentTab = Frame
+	end)
+
+	table.insert(Tabs,Frame)
+
+	if not CurrentTab then
+		Frame.Visible = true
+		CurrentTab = Frame
+	end
+
+	return Frame
+end
+
+local function CreateToggle(parent,text,callback)
+
+	local Holder = Instance.new("Frame")
+	Holder.Parent = parent
+	Holder.Size = UDim2.new(1,-10,0,50)
+	Holder.BackgroundColor3 = Color3.fromRGB(25,25,25)
+	Holder.BorderSizePixel = 0
+
+	Instance.new("UICorner",Holder).CornerRadius = UDim.new(0,12)
 
 	local Label = Instance.new("TextLabel")
-	Label.Parent = Frame
+	Label.Parent = Holder
 	Label.BackgroundTransparency = 1
 	Label.Position = UDim2.new(0,15,0,0)
 	Label.Size = UDim2.new(0.6,0,1,0)
 	Label.Font = Enum.Font.GothamSemibold
 	Label.Text = text
 	Label.TextColor3 = Color3.new(1,1,1)
-	Label.TextSize = 16
+	Label.TextSize = 15
 	Label.TextXAlignment = Enum.TextXAlignment.Left
 
 	local Toggle = Instance.new("TextButton")
-	Toggle.Parent = Frame
+	Toggle.Parent = Holder
 	Toggle.Size = UDim2.new(0,70,0,30)
 	Toggle.Position = UDim2.new(1,-85,0.5,-15)
 	Toggle.BackgroundColor3 = Color3.fromRGB(170,0,0)
@@ -177,11 +380,20 @@ local function CreateToggle(text,callback)
 	end)
 end
 
--- INFINITE JUMP
+-- TABS
+
+local MainTab = CreateTab("Main")
+local PlayerTab = CreateTab("Player")
+local VisualTab = CreateTab("Visual")
+local MiscTab = CreateTab("Misc")
+
+-- FEATURES
+
+-- Infinite Jump
 
 local InfiniteJump = false
 
-CreateToggle("Infinite Jump",function(v)
+CreateToggle(MainTab,"Infinite Jump",function(v)
 	InfiniteJump = v
 end)
 
@@ -197,11 +409,12 @@ UIS.JumpRequest:Connect(function()
 	end
 end)
 
--- SPEED
+-- WalkSpeed
 
-CreateToggle("WalkSpeed 50",function(v)
+CreateToggle(PlayerTab,"WalkSpeed 50",function(v)
 
 	local Character = Player.Character
+
 	if Character and Character:FindFirstChildOfClass("Humanoid") then
 
 		if v then
@@ -212,11 +425,11 @@ CreateToggle("WalkSpeed 50",function(v)
 	end
 end)
 
--- NOCLIP
+-- Noclip
 
 local Noclip = false
 
-CreateToggle("Noclip",function(v)
+CreateToggle(PlayerTab,"Noclip",function(v)
 	Noclip = v
 end)
 
@@ -233,87 +446,24 @@ RunService.Stepped:Connect(function()
 	end
 end)
 
--- FULLBRIGHT
+-- FullBright
 
 local OldBrightness = Lighting.Brightness
 
-CreateToggle("FullBright",function(v)
+CreateToggle(VisualTab,"FullBright",function(v)
 
 	if v then
-
 		Lighting.Brightness = 5
 		Lighting.ClockTime = 12
 		Lighting.FogEnd = 100000
-
 	else
-
 		Lighting.Brightness = OldBrightness
 	end
 end)
 
--- FLY
+-- Anti AFK
 
-local Flying = false
-local FlyBV
-
-CreateToggle("Fly",function(v)
-
-	Flying = v
-
-	local Character = Player.Character
-	if not Character then return end
-
-	local HRP = Character:FindFirstChild("HumanoidRootPart")
-
-	if v then
-
-		FlyBV = Instance.new("BodyVelocity")
-		FlyBV.MaxForce = Vector3.new(9e9,9e9,9e9)
-		FlyBV.Velocity = Vector3.new(0,0,0)
-		FlyBV.Parent = HRP
-
-	else
-
-		if FlyBV then
-			FlyBV:Destroy()
-		end
-	end
-end)
-
-RunService.RenderStepped:Connect(function()
-
-	if Flying and FlyBV and Player.Character then
-
-		local HRP = Player.Character:FindFirstChild("HumanoidRootPart")
-
-		if HRP then
-
-			local Velocity = Vector3.zero
-
-			if UIS:IsKeyDown(Enum.KeyCode.W) then
-				Velocity = Velocity + workspace.CurrentCamera.CFrame.LookVector
-			end
-
-			if UIS:IsKeyDown(Enum.KeyCode.S) then
-				Velocity = Velocity - workspace.CurrentCamera.CFrame.LookVector
-			end
-
-			if UIS:IsKeyDown(Enum.KeyCode.A) then
-				Velocity = Velocity - workspace.CurrentCamera.CFrame.RightVector
-			end
-
-			if UIS:IsKeyDown(Enum.KeyCode.D) then
-				Velocity = Velocity + workspace.CurrentCamera.CFrame.RightVector
-			end
-
-			FlyBV.Velocity = Velocity * 60
-		end
-	end
-end)
-
--- ANTI AFK
-
-CreateToggle("Anti AFK",function(v)
+CreateToggle(MiscTab,"Anti AFK",function(v)
 
 	if v then
 
@@ -327,16 +477,16 @@ CreateToggle("Anti AFK",function(v)
 	end
 end)
 
--- REJOIN BUTTON
+-- Rejoin
 
 local Rejoin = Instance.new("TextButton")
-Rejoin.Parent = Scroll
-Rejoin.Size = UDim2.new(1,-24,0,50)
+Rejoin.Parent = MiscTab
+Rejoin.Size = UDim2.new(1,-10,0,50)
 Rejoin.BackgroundColor3 = Color3.fromRGB(35,35,35)
 Rejoin.Text = "Rejoin Server"
 Rejoin.Font = Enum.Font.GothamBold
 Rejoin.TextColor3 = Color3.new(1,1,1)
-Rejoin.TextSize = 16
+Rejoin.TextSize = 15
 Rejoin.BorderSizePixel = 0
 
 Instance.new("UICorner",Rejoin).CornerRadius = UDim.new(0,12)
@@ -357,7 +507,7 @@ OpenButton.MouseButton1Click:Connect(function()
 	OpenButton.Visible = false
 end)
 
--- MAIN DRAG
+-- DRAG MAIN
 
 local dragging = false
 local dragInput
@@ -410,7 +560,7 @@ UIS.InputChanged:Connect(function(input)
 	end
 end)
 
--- OPEN BUTTON DRAG
+-- DRAG OPEN BUTTON
 
 local dragging2 = false
 local dragInput2
