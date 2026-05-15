@@ -540,6 +540,81 @@ local function CreateButton(parent,text,callback)
 	end)
 end
 
+local function CreateLoading(text)
+
+	local Loading = Instance.new("Frame")
+	Loading.Parent = ScreenGui
+	Loading.Size = UDim2.new(1,0,1,0)
+	Loading.BackgroundColor3 = Color3.fromRGB(0,0,0)
+	Loading.BackgroundTransparency = 0.35
+	Loading.ZIndex = 999
+
+	local Box = Instance.new("Frame")
+	Box.Parent = Loading
+	Box.Size = UDim2.new(0,260,0,120)
+	Box.Position = UDim2.new(0.5,-130,0.5,-60)
+	Box.BackgroundColor3 = Color3.fromRGB(18,18,18)
+	Box.BorderSizePixel = 0
+	Box.ZIndex = 1000
+
+	Instance.new("UICorner",Box).CornerRadius = UDim.new(0,18)
+
+	local Stroke = Instance.new("UIStroke")
+	Stroke.Parent = Box
+	Stroke.Color = Color3.fromRGB(70,70,70)
+
+	local Title = Instance.new("TextLabel")
+	Title.Parent = Box
+	Title.BackgroundTransparency = 1
+	Title.Size = UDim2.new(1,0,0,40)
+	Title.Position = UDim2.new(0,0,0,10)
+	Title.Font = Enum.Font.GothamBold
+	Title.Text = text
+	Title.TextColor3 = Color3.new(1,1,1)
+	Title.TextSize = 18
+	Title.ZIndex = 1001
+
+	local Status = Instance.new("TextLabel")
+	Status.Parent = Box
+	Status.BackgroundTransparency = 1
+	Status.Size = UDim2.new(1,0,0,25)
+	Status.Position = UDim2.new(0,0,0,45)
+	Status.Font = Enum.Font.Gotham
+	Status.Text = "Loading Script..."
+	Status.TextColor3 = Color3.fromRGB(180,180,180)
+	Status.TextSize = 14
+	Status.ZIndex = 1001
+
+	local BarBack = Instance.new("Frame")
+	BarBack.Parent = Box
+	BarBack.Size = UDim2.new(0,210,0,10)
+	BarBack.Position = UDim2.new(0.5,-105,0,82)
+	BarBack.BackgroundColor3 = Color3.fromRGB(35,35,35)
+	BarBack.BorderSizePixel = 0
+	BarBack.ZIndex = 1001
+
+	Instance.new("UICorner",BarBack).CornerRadius = UDim.new(1,0)
+
+	local Bar = Instance.new("Frame")
+	Bar.Parent = BarBack
+	Bar.Size = UDim2.new(0,0,1,0)
+	Bar.BackgroundColor3 = Color3.fromRGB(0,170,255)
+	Bar.BorderSizePixel = 0
+	Bar.ZIndex = 1002
+
+	Instance.new("UICorner",Bar).CornerRadius = UDim.new(1,0)
+
+	TweenService:Create(
+		Bar,
+		TweenInfo.new(2,Enum.EasingStyle.Quad),
+		{Size = UDim2.new(1,0,1,0)}
+	):Play()
+
+	task.wait(2)
+
+	Loading:Destroy()
+end
+
 -- TABS
 
 local MainTab = CreateTab("Main")
@@ -780,24 +855,24 @@ end)
 
 CreateButton(ScriptTab,"Cyraa Hub Brainrot",function()
 
+	CreateLoading("Loading Be Flash For Brainrot")
+
 	loadstring(game:HttpGet("https://rawscripts.net/raw/Infinity-Be-Flash-For-Brainrots!-Auto-farm-keyless-Cyraa-Hub-215449"))()
 
 end)
 
 CreateButton(ScriptTab,"Infinite Yield",function()
 
+    CreateLoading("Loading infiniteyield")
+    
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 
 end)
 
 CreateButton(ScriptTab,"Dex Explorer",function()
 
+     CreateLoading("Loading Dex Explorer")
+
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
-
-end)
-
-CreateButton(ScriptTab,"SimpleSpy",function()
-
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/exxtremestuffs/SimpleSpySource/master/SimpleSpy.lua"))()
 
 end)
