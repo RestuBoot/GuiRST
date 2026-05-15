@@ -876,3 +876,11 @@ CreateButton(ScriptTab,"Dex Explorer",function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
 
 end)
+
+CreateButton(ScriptTab,"Slime RNG",function()
+
+     CreateLoading("Loading Slime RNG")
+
+	loadstring(game:HttpGet("https://rawscripts.net/raw/Slime-RNG-KEYLESS-INF-COIN-213984"))()
+
+end)
