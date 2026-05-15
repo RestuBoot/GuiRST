@@ -109,7 +109,7 @@ CopyButton.Parent = KeyMain
 CopyButton.Size = UDim2.new(0,165,0,40)
 CopyButton.Position = UDim2.new(0.5,-170,0,170)
 CopyButton.BackgroundColor3 = Color3.fromRGB(35,35,35)
-CopyButton.Text = "COPY LINK"
+CopyButton.Text = "JOIN MY COMMUNITY"
 CopyButton.Font = Enum.Font.GothamBold
 CopyButton.TextColor3 = Color3.new(1,1,1)
 CopyButton.TextSize = 15
@@ -853,7 +853,7 @@ end)
 --                    SCRIPT TAB                          --
 --========================================================--
 
-CreateButton(ScriptTab,"Cyraa Hub Brainrot",function()
+CreateButton(ScriptTab,"BeFlash For Brainrot",function()
 
 	CreateLoading("Loading Be Flash For Brainrot")
 
