@@ -33,7 +33,7 @@ Blur.Size = 15
 
 local KeyMain = Instance.new("Frame")
 KeyMain.Parent = KeyGui
-KeyMain.Size = UDim2.new(0,430,0,300)
+KeyMain.Size = UDim2.new(0,430,0,420)
 KeyMain.Position = UDim2.new(0.5,-215,0.5,-150)
 KeyMain.BackgroundColor3 = Color3.fromRGB(15,15,15)
 KeyMain.BorderSizePixel = 0
@@ -85,25 +85,39 @@ Subtitle.Text = "Premium Access Key System"
 Subtitle.TextColor3 = Color3.fromRGB(180,180,180)
 Subtitle.TextSize = 15
 
--- RULES TEXT
+-- RULES
 
 local Rules = Instance.new("TextLabel")
 Rules.Parent = KeyMain
 Rules.BackgroundTransparency = 1
-Rules.Position = UDim2.new(0.5,-170,0,85)
-Rules.Size = UDim2.new(0,340,0,35)
-Rules.Font = Enum.Font.GothamSemibold
-Rules.Text = "Join the official THUB community before requesting your free premium access key."
-Rules.TextColor3 = Color3.fromRGB(170,170,170)
-Rules.TextSize = 13
+Rules.Position = UDim2.new(0,20,0,90)
+Rules.Size = UDim2.new(1,-40,0,45)
+Rules.Font = Enum.Font.Gotham
+Rules.Text = "This script is exclusive to group members.\nJoin our community to unlock full access!"
+Rules.TextColor3 = Color3.fromRGB(200,200,200)
+Rules.TextSize = 14
 Rules.TextWrapped = true
+
+-- HOW TO JOIN
+
+local Steps = Instance.new("TextLabel")
+Steps.Parent = KeyMain
+Steps.BackgroundTransparency = 1
+Steps.Position = UDim2.new(0,25,0,135)
+Steps.Size = UDim2.new(1,-50,0,90)
+Steps.Font = Enum.Font.Gotham
+Steps.Text = "① Click Copy Link below\n② Open the link in browser\n③ Join the community\n④ Return here and unlock!"
+Steps.TextColor3 = Color3.fromRGB(220,220,220)
+Steps.TextSize = 14
+Steps.TextXAlignment = Enum.TextXAlignment.Left
+Steps.TextYAlignment = Enum.TextYAlignment.Top
 
 -- INPUT BOX
 
 local KeyBox = Instance.new("TextBox")
 KeyBox.Parent = KeyMain
 KeyBox.Size = UDim2.new(0,340,0,45)
-KeyBox.Position = UDim2.new(0.5,-170,0,130)
+KeyBox.Position = UDim2.new(0.5,-170,0,220)
 KeyBox.BackgroundColor3 = Color3.fromRGB(22,22,22)
 KeyBox.PlaceholderText = "Enter Key..."
 KeyBox.Text = ""
@@ -120,7 +134,7 @@ Instance.new("UICorner",KeyBox).CornerRadius = UDim.new(0,12)
 local CopyButton = Instance.new("TextButton")
 CopyButton.Parent = KeyMain
 CopyButton.Size = UDim2.new(0,340,0,40)
-CopyButton.Position = UDim2.new(0.5,-170,0,170)
+CopyButton.Position = UDim2.new(0.5,-170,0,280)
 CopyButton.BackgroundColor3 = Color3.fromRGB(35,35,35)
 CopyButton.Text = "JOIN MY COMMUNITY"
 CopyButton.Font = Enum.Font.GothamBold
@@ -135,7 +149,7 @@ Instance.new("UICorner",CopyButton).CornerRadius = UDim.new(0,10)
 local Check = Instance.new("TextButton")
 Check.Parent = KeyMain
 Check.Size = UDim2.new(0,340,0,45)
-Check.Position = UDim2.new(0.5,-170,0,220)
+Check.Position = UDim2.new(0.5,-170,0,330)
 Check.BackgroundColor3 = Color3.fromRGB(0,170,127)
 Check.Text = "ENTER"
 Check.Font = Enum.Font.GothamBold
