@@ -81,7 +81,7 @@ Subtitle.BackgroundTransparency = 1
 Subtitle.Position = UDim2.new(0,0,0,60)
 Subtitle.Size = UDim2.new(1,0,0,30)
 Subtitle.Font = Enum.Font.Gotham
-Subtitle.Text = "Premium Access Key System"
+Subtitle.Text = "Premium Script Access For Member Only"
 Subtitle.TextColor3 = Color3.fromRGB(180,180,180)
 Subtitle.TextSize = 15
 
