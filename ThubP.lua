@@ -9,7 +9,7 @@ pcall(function()
 	game.CoreGui:FindFirstChild("THUB_KEYSYSTEM"):Destroy()
 end)
 
-local CorrectKey = "THUB2026"
+local CorrectKey = "."
 local KeyPassed = false
 
 -- CHANGE THIS LINK
@@ -151,7 +151,7 @@ Check.Parent = KeyMain
 Check.Size = UDim2.new(0,340,0,45)
 Check.Position = UDim2.new(0.5,-170,0,330)
 Check.BackgroundColor3 = Color3.fromRGB(0,170,127)
-Check.Text = "ENTER"
+Check.Text = "UNLOCK"
 Check.Font = Enum.Font.GothamBold
 Check.TextColor3 = Color3.new(1,1,1)
 Check.TextSize = 17
