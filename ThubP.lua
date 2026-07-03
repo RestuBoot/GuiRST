@@ -9,12 +9,12 @@ pcall(function()
 	game.CoreGui:FindFirstChild("THUB_KEYSYSTEM"):Destroy()
 end)
 
-local CorrectKey = "."
+local CorrectKey = "THUB26"
 local KeyPassed = false
 
 -- CHANGE THIS LINK
 
-local KeyLink = "https://roblox.com.bz/communities/520850900/"
+local KeyLink = "https://sfl.gl/Tb5Im"
 
 -- GUI
 
