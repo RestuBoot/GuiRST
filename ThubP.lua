@@ -849,34 +849,26 @@ end)
 --                    SCRIPT TAB                          --
 --========================================================--
 
-CreateButton(ScriptTab,"BeFlash For Brainrot",function()
-
-	CreateLoading("Loading Be Flash For Brainrot")
-
-	loadstring(game:HttpGet("https://rawscripts.net/raw/Infinity-Be-Flash-For-Brainrots!-Auto-farm-keyless-Cyraa-Hub-215449"))()
-
+-- GAG2
+CreateButton(ScriptTab,"GAG2",function()
+    CreateLoading("Loading GAG2 Script")
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Grow-a-Garden-2-Best-and-welloptimized-gag2-script-237605"))()
 end)
 
+-- Infinite Yield
 CreateButton(ScriptTab,"Infinite Yield",function()
-
-    CreateLoading("Loading infiniteyield")
-    
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-
+    CreateLoading("Loading Infinite Yield")
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 end)
 
+-- Dex Explorer
 CreateButton(ScriptTab,"Dex Explorer",function()
-
-     CreateLoading("Loading Dex Explorer")
-
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
-
+    CreateLoading("Loading Dex Explorer")
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
 end)
 
-CreateButton(ScriptTab,"Slime RNG",function()
-
-     CreateLoading("Loading Slime RNG")
-
-	loadstring(game:HttpGet("https://rawscripts.net/raw/Slime-RNG-KEYLESS-INF-COIN-213984"))()
-
+-- Animal Hospital
+CreateButton(ScriptTab,"Animal Hospital",function()
+    CreateLoading("Loading Animal Hospital Script")
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/MinityD/roblox-utils/main/animal%20hospital.lua"))()
 end)
